@@ -5,7 +5,7 @@ import {SugarSettingTab} from './settings/obj/SugarSettingTab';
 
 import {Ninja} from './settings/obj/Ninja';
 import Sugar from './obj/sugar';
-import {SUGAR_VIEW_TYPE, SugarView, FILE_EXTENSIONS} from "./obj/view";
+import {SUGAR_VIEW_TYPE, SugarView, FILE_EXTENSIONS} from './obj/view'
 
 export default class SugarPlugin extends Plugin {
 	settings: SugarSettings;
@@ -38,8 +38,8 @@ export default class SugarPlugin extends Plugin {
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new SugarSettingTab(this.app, this));
 
-		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
-		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
+		// registers an interval to continue to hide the sugar path of the plugin
+		this.registerInterval(window.setInterval(() => Ninja.hidePath(this.settings.sugar_directory), 10));
 	}
 
 
@@ -49,7 +49,6 @@ export default class SugarPlugin extends Plugin {
 
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
-		Ninja.hidePath(this.settings.sugar_directory)
 	}
 
 	async saveSettings() {
