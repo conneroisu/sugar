@@ -24,8 +24,7 @@ export class SugarSettingTab extends PluginSettingTab {
 		});
 
 		/** 
-		 * This is a settitng for the directory where .sugar files are stored for items inside of a directory 
-		 * Should be hidden 
+		 * This is a settitng for the directory where .sugar files are stored and hidden for items inside of a directory 
 		 **/
 		new Setting(containerEl)
 			.setName("Sugar Directory")
@@ -80,6 +79,9 @@ export class SugarSettingTab extends PluginSettingTab {
 					})
 			);
 
+		/** 
+		 * Toggle representing the state of the debug setting for the plugin 
+		 **/
 		new Setting(containerEl)
 			.setName("Status of the Debug Setting")
 			.setDesc(
