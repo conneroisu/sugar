@@ -3,6 +3,7 @@ import {Editor, MarkdownView, Plugin, WorkspaceLeaf} from 'obsidian';
 import {DEFAULT_SETTINGS, SugarSettings} from './settings/obj/SugarSettings';
 import {SugarSettingTab} from './settings/obj/SugarSettingTab';
 
+import {Ninja} from './settings/obj/Ninja';
 import Sugar from './obj/sugar';
 import {SUGAR_VIEW_TYPE, SugarView, FILE_EXTENSIONS} from "./obj/sugar";
 
@@ -12,6 +13,7 @@ export default class SugarPlugin extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
+
 		this.sugar = new Sugar(this)
 
 		this.registerView(SUGAR_VIEW_TYPE, (leaf: WorkspaceLeaf) => new SugarView(leaf, this.sugar));
@@ -47,6 +49,7 @@ export default class SugarPlugin extends Plugin {
 
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+		Ninja.hidePath(this.settings.sugar_directory)
 	}
 
 	async saveSettings() {

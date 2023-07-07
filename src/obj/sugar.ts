@@ -38,11 +38,6 @@ export default class Sugar {
 				active: true,
 			});
 		}
-
-
-
-
-
 		return;
 	}
 
@@ -50,7 +45,6 @@ export default class Sugar {
 
 
 	processViewContent() {
-
 		this.app.workspace.getLeavesOfType(SUGAR_VIEW_TYPE).forEach((leaf) => {
 			if (leaf.view instanceof SugarView) {
 				leaf.openFile
@@ -68,9 +62,7 @@ export class SugarView extends TextFileView {
 	getViewData(): string {
 		throw new Error("Method not implemented.");
 	}
-
 	plugin: SugarPlugin;
-
 	/** 
 	 * Constructs the sugar view 
 	 **/
@@ -79,14 +71,12 @@ export class SugarView extends TextFileView {
 		this.plugin = sugar.plugin;
 		this.setViewData("fdaa", false)
 	}
-
 	/** 
 	 * Get the view type of the sugar view 
 	 **/
 	getViewType(): string {
 		return SUGAR_VIEW_TYPE;
 	}
-
 	setViewData(data: string, clear: boolean): void {
 		// this.contentEl.createEl()
 		this.data = "heelo"
@@ -96,8 +86,6 @@ export class SugarView extends TextFileView {
 	clear(): void {
 		this.data = "";
 	}
-
-
 	getDisplayText(): string {
 		return "Sugar View";
 	}
@@ -105,7 +93,6 @@ export class SugarView extends TextFileView {
 	getIcon(): string {
 		return "mountain";
 	}
-
 	async onOpen(): Promise<void> {
 		new Notice("Sugar View Opened");
 	}

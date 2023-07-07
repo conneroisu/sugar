@@ -1,4 +1,4 @@
-// Credits go to Liam's Periodic Notes Plugin: https://github.com/liamcain/obsidian-periodic-notes
+// Credits to Liam's Periodic Notes Plugin: https://github.com/liamcain/obsidian-periodic-notes
 
 import {ISuggestOwner, Scope} from "obsidian";
 import {createPopper, Instance as PopperInstance} from "@popperjs/core";
@@ -147,7 +147,6 @@ export abstract class TextInputSuggest<T> implements ISuggestOwner<T> {
 			this.close();
 			return;
 		}
-
 		if (suggestions.length > 0) {
 			this.suggest.setSuggestions(suggestions);
 			this.open(app.dom.appContainerEl, this.inputEl);
@@ -190,7 +189,9 @@ export abstract class TextInputSuggest<T> implements ISuggestOwner<T> {
 		app.keymap.popScope(this.scope);
 
 		this.suggest.setSuggestions([]);
-		if (this.popper) this.popper.destroy();
+		if (this.popper) {
+			this.popper.destroy();
+		}
 		this.suggestEl.detach();
 	}
 

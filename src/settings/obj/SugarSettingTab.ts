@@ -1,6 +1,7 @@
-import {ToggleComponent, ButtonComponent, App, PluginSettingTab, Setting} from 'obsidian';
-import {FolderSuggest} from '../suggesters/folder';
+import { ToggleComponent, ButtonComponent, App, PluginSettingTab, Setting } from 'obsidian';
+import { FolderSuggest } from '../suggesters/folder';
 import SugarPlugin from 'src/main';
+import { Ninja } from './Ninja';
 
 /**
  * This is a settings tab for the plugin, Sugar.
@@ -14,7 +15,7 @@ export class SugarSettingTab extends PluginSettingTab {
 	}
 
 	display(): void {
-		const {containerEl} = this;
+		const { containerEl } = this;
 
 		containerEl.empty();
 
@@ -34,8 +35,8 @@ export class SugarSettingTab extends PluginSettingTab {
 				cb.setPlaceholder("example: folder1/folder2")
 					.setValue(this.plugin.settings.sugar_directory)
 					.onChange((new_folder) => {
-						this.unhidePath(this.plugin.settings.sugar_directory)
-						this.hidePath(new_folder)
+						Ninja.unhidePath(this.plugin.settings.sugar_directory)
+						Ninja.unhidePath(new_folder)
 						this.plugin.settings.sugar_directory = new_folder;
 						this.plugin.saveSettings();
 					});
@@ -124,26 +125,6 @@ export class SugarSettingTab extends PluginSettingTab {
 						open("https://github.com/conneroisu/sugar/compare");
 					});
 			});
-	}
-	hidePath(path: string) {
-		this.changePathVisibility(path, true)
-	}
-	unhidePath(path: string) {
-		this.changePathVisibility(path, false);
-	}
-	changePathVisibility(path: string, hide: boolean) {
-		const n = document.querySelector(`[data-path="${path}"]`);
-		if (!n) {
-			return;
-		}
-		const p = n.parentElement
-		if (p) {
-			if (hide) {
-				p.style.display = `none`
-			} else {
-				p.style.display = ``;
-			}
-		}
 	}
 
 
