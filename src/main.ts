@@ -1,7 +1,7 @@
 import {Editor, MarkdownView, Plugin, WorkspaceLeaf} from 'obsidian';
 
-import {DEFAULT_SETTINGS, SugarSettings} from './settings/SugarSettings';
-import {SugarSettingTab} from './settings/SugarSettingTab';
+import {DEFAULT_SETTINGS, SugarSettings} from './settings/obj/SugarSettings';
+import {SugarSettingTab} from './settings/obj/SugarSettingTab';
 
 import Sugar from './obj/sugar';
 import {SUGAR_VIEW_TYPE, SugarView, FILE_EXTENSIONS} from "./obj/sugar";

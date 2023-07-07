@@ -1,5 +1,6 @@
 import {ToggleComponent, ButtonComponent, App, PluginSettingTab, Setting} from 'obsidian';
-import SugarPlugin from './../main';
+import {FolderSuggest} from '../suggesters/folder';
+import SugarPlugin from 'src/main';
 
 /**
  * This is a settings tab for the plugin, Sugar.
@@ -21,6 +22,24 @@ export class SugarSettingTab extends PluginSettingTab {
 			text: "Settings for the Sugar Plugin",
 		});
 
+		/** 
+		 * This is a settitng for the directory where .sugar files are stored for items inside of a directory 
+		 * Should be hidden 
+		 **/
+		new Setting(containerEl)
+			.setName("Sugar Directory")
+			.setDesc("Directory name to hide the sugar files inside of. Additionally, the folder will be hidden from the file explorer inside Obsidian.")
+			.addSearch((cb) => {
+				new FolderSuggest(cb.inputEl);
+				cb.setPlaceholder("example: folder1/folder2")
+					.setValue(this.plugin.settings.sugar_directory)
+					.onChange((new_folder) => {
+						this.unhidePath(this.plugin.settings.sugar_directory)
+						this.hidePath(new_folder)
+						this.plugin.settings.sugar_directory = new_folder;
+						this.plugin.saveSettings();
+					});
+			});
 		/**
 		 * This is a setting that is a toggle for showing hidden files.
 		 **/
@@ -106,4 +125,26 @@ export class SugarSettingTab extends PluginSettingTab {
 					});
 			});
 	}
+	hidePath(path: string) {
+		this.changePathVisibility(path, true)
+	}
+	unhidePath(path: string) {
+		this.changePathVisibility(path, false);
+	}
+	changePathVisibility(path: string, hide: boolean) {
+		const n = document.querySelector(`[data-path="${path}"]`);
+		if (!n) {
+			return;
+		}
+		const p = n.parentElement
+		if (p) {
+			if (hide) {
+				p.style.display = `none`
+			} else {
+				p.style.display = ``;
+			}
+		}
+	}
+
+
 }
