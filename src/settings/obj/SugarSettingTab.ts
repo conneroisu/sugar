@@ -1,7 +1,7 @@
-import {ToggleComponent, ButtonComponent, App, PluginSettingTab, Setting} from 'obsidian';
-import {FolderSuggest} from '../suggesters/folder';
+import { ToggleComponent, ButtonComponent, App, PluginSettingTab, Setting } from 'obsidian';
+import { FolderSuggest } from '../suggesters/folder';
 import SugarPlugin from 'src/main';
-import {Ninja} from './Ninja';
+import { Ninja } from './Ninja';
 
 /**
  * This is a settings tab for the plugin, Sugar.
@@ -15,7 +15,7 @@ export class SugarSettingTab extends PluginSettingTab {
 	}
 
 	display(): void {
-		const {containerEl} = this;
+		const { containerEl } = this;
 
 		containerEl.empty();
 
@@ -39,6 +39,23 @@ export class SugarSettingTab extends PluginSettingTab {
 						this.plugin.settings.sugar_directory = new_folder;
 						this.plugin.saveSettings();
 					});
+				/**
+				 * This is the toggle for the debug mode for the plugin allowing for more diagnotstic information to be logged
+				 **/
+				new Setting(containerEl)
+					.setName("Debug`")
+					.setDesc(
+						"Status fo teh Debugging mode allowing for more diagnostic info to be logged."
+					)
+					.addToggle((toggle: ToggleComponent) =>
+						toggle
+							.setValue(this.plugin.settings.debug)
+							.onChange(async (value: boolean): Promise<void> => {
+								value;
+								this.plugin.settings.debug = value;
+								await this.plugin.saveSettings();
+							})
+					);
 			});
 		/**
 		 * This is a setting that is a toggle for showing hidden files.

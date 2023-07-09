@@ -1,7 +1,7 @@
 // Credits to Liam's Periodic Notes Plugin: https://github.com/liamcain/obsidian-periodic-notes
 
-import {ISuggestOwner, Scope} from "obsidian";
-import {createPopper, Instance as PopperInstance} from "@popperjs/core";
+import { ISuggestOwner, Scope } from "obsidian";
+import { createPopper, Instance as PopperInstance } from "@popperjs/core";
 
 const wrapAround = (value: number, size: number): number => {
 	return ((value % size) + size) % size;
@@ -14,11 +14,7 @@ class Suggest<T> {
 	private selectedItem: number;
 	private containerEl: HTMLElement;
 
-	constructor(
-		owner: ISuggestOwner<T>,
-		containerEl: HTMLElement,
-		scope: Scope
-	) {
+	constructor(owner: ISuggestOwner<T>, containerEl: HTMLElement, scope: Scope) {
 		this.owner = owner;
 		this.containerEl = containerEl;
 
@@ -166,7 +162,7 @@ export abstract class TextInputSuggest<T> implements ISuggestOwner<T> {
 				{
 					name: "sameWidth",
 					enabled: true,
-					fn: ({state, instance}) => {
+					fn: ({ state, instance }) => {
 						// Note: positioning needs to be calculated twice -
 						// first pass - positioning it according to the width of the popper
 						// second pass - position it with the width bound to the reference element
