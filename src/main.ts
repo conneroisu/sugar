@@ -4,7 +4,7 @@ import { DEFAULT_SETTINGS, SugarSettings } from './settings/obj/SugarSettings';
 import { SugarSettingTab } from './settings/obj/SugarSettingTab';
 
 import { Ninja } from './settings/obj/Ninja';
-import Sugar, { getSugarView } from './obj/sugar';
+import Sugar, { getSugarPath } from './obj/sugar';
 import { SUGAR_VIEW_TYPE, SugarView, FILE_EXTENSIONS } from './obj/view'
 import { CommandHandler } from './obj/command_handler';
 
@@ -41,16 +41,11 @@ export default class SugarPlugin extends Plugin {
 
 	}
 	set_actice_sugar_path() {
-		if (getSugarView(this.active_sugar_path) && getSugarView(this.active_sugar_path).file) {
-			this.active_sugar_path = getSugarView(this.active_sugar_path).file.path;
-			return;
-		}
 		const current = this.app.workspace.getActiveFile();
 		if (current && current.path.endsWith(".sugar")) {
 			this.active_sugar_path = current.path;
 			return;
 		}
-
 	}
 
 

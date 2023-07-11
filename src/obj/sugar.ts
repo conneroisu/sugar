@@ -1,5 +1,5 @@
 import SugarPlugin from "src/main";
-import { App, TFile, normalizePath } from "obsidian";
+import { App, TFile, normalizePath, View, MarkdownView } from "obsidian";
 import { SugarView, SUGAR_VIEW_TYPE } from "./view";
 import * as fs from 'fs';
 import * as path from 'path';
@@ -35,7 +35,7 @@ export default class Sugar {
 	async open_sugar(file_path: string) {
 		const open_dir = this.plugin.settings.sugar_directory + path.sep + file_path + ".sugar"
 		try {
-			const sugarView = getSugarView(file_path)
+			const sugarView = getASugarView(file_path)
 
 			const df = await this.app.vault.create(open_dir, create_sugar_data(open_dir));
 
@@ -52,7 +52,7 @@ export default class Sugar {
 		} catch (e) {
 			const af = this.resolve_tfile(open_dir)
 			if (af instanceof TFile && af != undefined) {
-				const sugarView = getSugarView(this.plugin.active_sugar_path);
+				const sugarView = getASugarView(this.plugin.active_sugar_path);
 				if (sugarView) {
 					sugarView.file = af;
 				}
@@ -62,7 +62,7 @@ export default class Sugar {
 			}
 		}
 
-		getSugarView(file_path);
+		getASugarView(file_path);
 		return;
 	}
 
@@ -71,7 +71,7 @@ export default class Sugar {
 	 * Processes the data contained in the sugar view 
 	 **/
 	processViewContent() {
-		const sugarView = getSugarView(this.plugin.active_sugar_path);
+		const sugarView = getASugarView(this.plugin.active_sugar_path);
 		if (sugarView) {
 			this.app.workspace.getLeavesOfType(SUGAR_VIEW_TYPE).forEach((leaf) => {
 				if (leaf.view instanceof SugarView) {
@@ -84,11 +84,8 @@ export default class Sugar {
 	/** 
 	 * Gives a TFile for a given vault path 
 	 **/
-	resolve_tfile(file_str: string): TFile {
-		if (file_str === undefined) {
-			file_str = this.plugin.active_sugar_path;
-		}
-		console.log("Normalizing file path: " + file_str)
+	public resolve_tfile(file_str: string): TFile {
+		if (this.plugin.settings.debug) { console.log("Normalizing file path: " + file_str) }
 		file_str = normalizePath(file_str);
 
 		const file = app.vault.getAbstractFileByPath(file_str);
@@ -111,11 +108,11 @@ export function create_sugar_data(sugar_dir: string): string {
 
 	const files = fs.readdirSync(sugar_dir);
 
-	const contents: string[] = []; // initialize contents as an empty array
+	const contents: string[] = [];
 
 	files.forEach((file) => {
 		const filePath = path.join(sugar_dir, file);
-		contents.push(fs.readFileSync(filePath, 'utf-8')); // push each file content into the array
+		contents.push(fs.readFileSync(filePath, 'utf-8'));
 	});
 
 	console.log("data: " + contents.join('\n'))
@@ -123,9 +120,16 @@ export function create_sugar_data(sugar_dir: string): string {
 }
 
 /** 
- * Retrieves the active sugar view 
+ * Gets the current sugar view if there is one 
  **/
-export function getSugarView(path: string): SugarView {
+export function getSugarPath(): View {
+	return this.app.workspace.getLeavesOfType(MarkdownView)[0].view as SugarView;
+}
+
+/** 
+ * Retrieves the/a active sugar view 
+ **/
+export function getASugarView(path: string): SugarView {
 
 	if (this.app.workspace.getLeavesOfType(SUGAR_VIEW_TYPE).length === 0) {
 		return new SugarView(this.app.workspace.getLeaf(true), this, path)
