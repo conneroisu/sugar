@@ -4,6 +4,9 @@ import { SugarView, SUGAR_VIEW_TYPE } from "./view";
 import * as fs from 'fs';
 import * as path from 'path';
 
+/** 
+ * The main workhorse class for the sugar plugin 
+ **/
 export default class Sugar {
 	/**
 	 * a sugar has a reference to the sugar plugin class
@@ -29,7 +32,7 @@ export default class Sugar {
 	/**
 	 * Command to open the sugar view of Type SugarView
 	 **/
-	async open_oil(file_path: string) {
+	async open_sugar(file_path: string) {
 		const open_dir = this.plugin.settings.sugar_directory + path.sep + file_path + ".sugar"
 		try {
 			const sugarView = getSugarView(file_path)
@@ -38,7 +41,7 @@ export default class Sugar {
 
 			console.log("Just tried to create sugar data")
 			if (df && sugarView) {
-				this.app.vault.append(df, create_sugar_data(file_path))
+				await this.app.vault.append(df, create_sugar_data(file_path))
 				sugarView.file = df;
 			}
 
@@ -64,6 +67,9 @@ export default class Sugar {
 	}
 
 
+	/** 
+	 * Processes the data contained in the sugar view 
+	 **/
 	processViewContent() {
 		const sugarView = getSugarView(this.plugin.active_sugar_path);
 		if (sugarView) {
@@ -74,6 +80,10 @@ export default class Sugar {
 			});
 		}
 	}
+
+	/** 
+	 * Gives a TFile for a given vault path 
+	 **/
 	resolve_tfile(file_str: string): TFile {
 		if (file_str === undefined) {
 			file_str = this.plugin.active_sugar_path;
