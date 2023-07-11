@@ -31,9 +31,17 @@ export class CommandHandler {
 					this.plugin.sugar.open_sugar(file.path);
 				}
 
-				if (this.plugin.settings.debug) { console.log("Opened Oil View") }
+				if (this.plugin.settings.debug) { console.log("Opened Sugar View") }
 			},
 		});
+		// this.plugin.addCommand({
+		// 	id: "insert-sugar-template-character",
+		// 	name: "Sugar Insert Character Inserted",
+		// 	callback: () => {
+		// 		// this.plugin.sugar.insert_sugar_template_character()
+
+		// 	},
+		// });
 		if (this.plugin.settings.debug) {
 			console.log("Setup Method of the Command Handler has ran.")
 		}
