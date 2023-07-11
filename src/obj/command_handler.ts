@@ -27,7 +27,7 @@ export class CommandHandler {
 					this.plugin.sugar.open_oil(file.path);
 				}
 
-				if (this.plugin.settings.debug) {console.log("Opened Oil View")}
+				if (this.plugin.settings.debug) { console.log("Opened Oil View") }
 			},
 		});
 		if (this.plugin.settings.debug) {

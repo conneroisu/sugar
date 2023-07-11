@@ -2,7 +2,7 @@ import SugarPlugin from "src/main";
 import { App, TFile, normalizePath } from "obsidian";
 import { SugarView, SUGAR_VIEW_TYPE } from "./view";
 import * as fs from 'fs';
-import * as pathe from 'path';
+import * as path from 'path';
 
 export default class Sugar {
 	/**
@@ -29,16 +29,16 @@ export default class Sugar {
 	/**
 	 * Command to open the sugar view of Type SugarView
 	 **/
-	async open_oil(path: string) {
-		const open_dir = this.plugin.settings.sugar_directory + pathe.sep + path + ".sugar"
+	async open_oil(file_path: string) {
+		const open_dir = this.plugin.settings.sugar_directory + path.sep + file_path + ".sugar"
 		try {
-			const sugarView = getSugarView(path)
+			const sugarView = getSugarView(file_path)
 
 			const df = await this.app.vault.create(open_dir, create_sugar_data(open_dir));
 
 			console.log("Just tried to create sugar data")
 			if (df && sugarView) {
-				this.app.vault.append(df, create_sugar_data(path))
+				this.app.vault.append(df, create_sugar_data(file_path))
 				sugarView.file = df;
 			}
 
@@ -59,7 +59,7 @@ export default class Sugar {
 			}
 		}
 
-		getSugarView(path);
+		getSugarView(file_path);
 		return;
 	}
 
@@ -104,7 +104,7 @@ export function create_sugar_data(sugar_dir: string): string {
 	const contents: string[] = []; // initialize contents as an empty array
 
 	files.forEach((file) => {
-		const filePath = pathe.join(sugar_dir, file);
+		const filePath = path.join(sugar_dir, file);
 		contents.push(fs.readFileSync(filePath, 'utf-8')); // push each file content into the array
 	});
 
@@ -112,6 +112,9 @@ export function create_sugar_data(sugar_dir: string): string {
 	return contents.join('\n');
 }
 
+/** 
+ * Retrieves the active sugar view 
+ **/
 export function getSugarView(path: string): SugarView {
 
 	if (this.app.workspace.getLeavesOfType(SUGAR_VIEW_TYPE).length === 0) {
