@@ -33,7 +33,6 @@ export class SugarView extends TextFileView {
 		this.plugin = sugar.plugin;
 		this.sugar = sugar;
 		this.path = path;
-		this.onLoadFile(this.plugin.sugar.resolve_tfile(this.path));
 	}
 	dom: HTMLElement;
 	scrollDOM: HTMLElement;
@@ -77,6 +76,7 @@ export class SugarView extends TextFileView {
 			</React.StrictMode>
 		);
 		new Notice("Sugar View Opened");
+		this.onLoadFile(this.plugin.sugar.resolve_tfile(this.path));
 	}
 
 	async onClose() {

@@ -33,33 +33,32 @@ export default class Sugar {
 	 * Command to open the sugar view of Type SugarView
 	 **/
 	async open_sugar(file_path: string) {
+		console.log("Opening sugar view with open_sugar")
 		const open_dir = this.plugin.settings.sugar_directory + path.sep + file_path + ".sugar"
-		try {
-			const sugarView = getASugarView(file_path)
+		console.log("Creating sugar file with name: " + open_dir)
+		const df = await this.app.vault.create(open_dir, create_sugar_data(file_path));
+		console.log("Just tried to create sugar data")
+		const sugarView = getASugarView(file_path)
+		if (df && sugarView) {
+			await this.app.vault.append(df, create_sugar_data(file_path))
+			sugarView.file = df;
+		} else {
+			Error("Could not create sugar data")
+		}
+		const leaves = this.plugin.app.workspace.getLeavesOfType(SUGAR_VIEW_TYPE);
+		if (leaves.length > 0) {
+			await leaves[0].openFile(df, { active: true });
+		}
 
-			const df = await this.app.vault.create(open_dir, create_sugar_data(open_dir));
-
-			console.log("Just tried to create sugar data")
-			if (df && sugarView) {
-				await this.app.vault.append(df, create_sugar_data(file_path))
-				sugarView.file = df;
+		const af = this.resolve_tfile(open_dir)
+		if (af instanceof TFile && af != undefined) {
+			const sugarView = getASugarView(this.plugin.active_sugar_path);
+			if (sugarView) {
+				sugarView.file = af;
 			}
-
-			const leaves = this.plugin.app.workspace.getLeavesOfType(SUGAR_VIEW_TYPE);
-			if (leaves.length > 0) {
-				await leaves[0].openFile(df, { active: true });
-			}
-		} catch (e) {
-			const af = this.resolve_tfile(open_dir)
-			if (af instanceof TFile && af != undefined) {
-				const sugarView = getASugarView(this.plugin.active_sugar_path);
-				if (sugarView) {
-					sugarView.file = af;
-				}
-			} else {
-				console.log(e);
-				console.log("Error: Could not open file");
-			}
+		} else {
+			console.log(e);
+			console.log("Error: Could not open file");
 		}
 
 		getASugarView(file_path);
