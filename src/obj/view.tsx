@@ -35,7 +35,8 @@ export class SugarView extends TextFileView {
 	scrollDOM: HTMLElement;
 	contentDOM: HTMLElement;
 	hoverPopover: HoverPopover | null;
-	setViewData(data: string, clear: boolean): void {
+	setViewData(data: string, clear?: boolean): void {
+
 		if (clear) {
 			this.data = "";
 		}

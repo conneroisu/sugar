@@ -1,5 +1,5 @@
 import SugarPlugin from "src/main";
-import {App, TFile, normalizePath, View, MarkdownView} from "obsidian";
+import {App, TFile, normalizePath} from "obsidian";
 import {SugarView, SUGAR_VIEW_TYPE} from "./view";
 import * as fs from 'fs';
 import * as path from 'path';
@@ -9,13 +9,7 @@ import {getASugarView} from "./util";
  * The main workhorse class for the sugar plugin 
  **/
 export default class Sugar {
-	/**
-	 * a sugar has a reference to the sugar plugin class
-	 **/
 	plugin: SugarPlugin;
-	/**
-	 * a sugar has a reference to the obsidian app during runtime
-	 **/
 	app: App;
 
 	/**
@@ -111,12 +105,5 @@ export function create_sugar_data(sugar_dir: string): string {
 
 	console.log("data: " + contents.join('\n'))
 	return contents.join('\n');
-}
-
-/** 
- * Gets the current sugar view if there is one 
- **/
-export function getSugarPath(): View {
-	return this.app.workspace.getLeavesOfType(MarkdownView)[0].view as SugarView;
 }
 
