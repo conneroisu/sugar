@@ -1,8 +1,9 @@
 import SugarPlugin from "src/main";
-import { App, TFile, normalizePath, View, MarkdownView } from "obsidian";
-import { SugarView, SUGAR_VIEW_TYPE } from "./view";
+import {App, TFile, normalizePath, View, MarkdownView} from "obsidian";
+import {SugarView, SUGAR_VIEW_TYPE} from "./view";
 import * as fs from 'fs';
 import * as path from 'path';
+import {getASugarView} from "./util";
 
 /** 
  * The main workhorse class for the sugar plugin 
@@ -12,14 +13,14 @@ export default class Sugar {
 	 * a sugar has a reference to the sugar plugin class
 	 **/
 	plugin: SugarPlugin;
-	/** 
+	/**
 	 * a sugar has a reference to the obsidian app during runtime
 	 **/
 	app: App;
 
-	/**  
-	* Constructs a Sugar Rock object 
-	**/
+	/**
+	 * Constructs a Sugar Rock object 
+	 **/
 	constructor(sugar_plugin: SugarPlugin) {
 		this.plugin = sugar_plugin;
 		this.app = this.plugin.app;
@@ -33,21 +34,16 @@ export default class Sugar {
 	 * Command to open the sugar view of Type SugarView
 	 **/
 	async open_sugar(file_path: string) {
-		console.log("Opening sugar view with open_sugar")
 		const open_dir = this.plugin.settings.sugar_directory + path.sep + file_path + ".sugar"
-		console.log("Creating sugar file with name: " + open_dir)
 		const df = await this.app.vault.create(open_dir, create_sugar_data(file_path));
-		console.log("Just tried to create sugar data")
 		const sugarView = getASugarView(file_path)
+
 		if (df && sugarView) {
-			await this.app.vault.append(df, create_sugar_data(file_path))
 			sugarView.file = df;
-		} else {
-			Error("Could not create sugar data")
 		}
 		const leaves = this.plugin.app.workspace.getLeavesOfType(SUGAR_VIEW_TYPE);
 		if (leaves.length > 0) {
-			await leaves[0].openFile(df, { active: true });
+			await leaves[0].openFile(df, {active: true});
 		}
 
 		const af = this.resolve_tfile(open_dir)
@@ -56,11 +52,7 @@ export default class Sugar {
 			if (sugarView) {
 				sugarView.file = af;
 			}
-		} else {
-			console.log(e);
-			console.log("Error: Could not open file");
 		}
-
 		getASugarView(file_path);
 		return;
 	}
@@ -74,7 +66,7 @@ export default class Sugar {
 		if (sugarView) {
 			this.app.workspace.getLeavesOfType(SUGAR_VIEW_TYPE).forEach((leaf) => {
 				if (leaf.view instanceof SugarView) {
-					leaf.openFile(sugarView.file, { active: true });
+					leaf.openFile(sugarView.file, {active: true});
 				}
 			});
 		}
@@ -84,7 +76,7 @@ export default class Sugar {
 	 * Gives a TFile for a given vault path 
 	 **/
 	public resolve_tfile(file_str: string): TFile {
-		if (this.plugin.settings.debug) { console.log("Normalizing file path: " + file_str) }
+		if (this.plugin.settings.debug) {console.log("Normalizing file path: " + file_str)}
 		file_str = normalizePath(file_str);
 
 		const file = app.vault.getAbstractFileByPath(file_str);
@@ -100,6 +92,9 @@ export default class Sugar {
 }
 
 
+/** 
+ * Creates the data for a sugar file 
+ **/
 export function create_sugar_data(sugar_dir: string): string {
 	if (!fs.existsSync(sugar_dir)) {
 		return "";
@@ -123,16 +118,5 @@ export function create_sugar_data(sugar_dir: string): string {
  **/
 export function getSugarPath(): View {
 	return this.app.workspace.getLeavesOfType(MarkdownView)[0].view as SugarView;
-}
-
-/** 
- * Retrieves the/a active sugar view 
- **/
-export function getASugarView(path: string): SugarView {
-
-	if (this.app.workspace.getLeavesOfType(SUGAR_VIEW_TYPE).length === 0) {
-		return new SugarView(this.app.workspace.getLeaf(true), this, path)
-	}
-	return this.app.workspace.getLeavesOfType(SUGAR_VIEW_TYPE)[0].view as SugarView;
 }
 

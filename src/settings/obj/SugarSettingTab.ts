@@ -1,7 +1,7 @@
-import { ToggleComponent, ButtonComponent, App, PluginSettingTab, Setting } from 'obsidian';
-import { FolderSuggest } from '../suggesters/folder';
+import {ToggleComponent, ButtonComponent, App, PluginSettingTab, Setting} from 'obsidian';
+import {FolderSuggest} from '../suggesters/folder';
 import SugarPlugin from 'src/main';
-import { Ninja } from './Ninja';
+import {Ninja} from './Ninja';
 
 /**
  * This is a settings tab for the plugin, Sugar.
@@ -15,7 +15,7 @@ export class SugarSettingTab extends PluginSettingTab {
 	}
 
 	display(): void {
-		const { containerEl } = this;
+		const {containerEl} = this;
 
 		containerEl.empty();
 

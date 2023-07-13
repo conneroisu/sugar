@@ -4,21 +4,18 @@ import {
 } from "obsidian";
 
 import * as React from "react";
-// import * as ReactDOM from "react-dom";
-//// @ts-expect-error, not typed
-// const editorView = view.editor.cm as EditorView;
 import Sugar from "./sugar";
-
-export const SUGAR_VIEW_TYPE = "sugar-view";
-
-export const FILE_EXTENSIONS = [".sugar"]
-
-import { SugarReactView } from './sugar-react';
-import { createRoot } from "react-dom/client";
+import {SugarReactView} from './sugar-react';
+import {createRoot} from "react-dom/client";
 import SugarPlugin from "src/main";
 
+export const SUGAR_VIEW_TYPE = "sugar-view";
+export const FILE_EXTENSIONS = [".sugar"]
 export const SUGAR_ICON = 'mountain'
 
+/** 
+ * Sugar View
+ **/
 export class SugarView extends TextFileView {
 	sugar: Sugar;
 	path: string;
@@ -45,6 +42,9 @@ export class SugarView extends TextFileView {
 		this.data = data;
 	}
 
+	/** 
+	 * Get the view data of the sugar View 
+	 **/
 	getViewData(): string {
 		return this.data;
 	}
@@ -57,17 +57,24 @@ export class SugarView extends TextFileView {
 	}
 
 
+	/** 
+	* Clears the sugar View 
+	**/
 	clear(): void {
 		this.data = "";
 	}
 
+
 	getDisplayText(): string {
-		return this.path;
+		return "Sugar View";
 	}
 
 	getIcon(): string {
 		return SUGAR_ICON;
 	}
+	/** 
+	 * Runs when the sugar view is Opened 
+	 **/
 	async onOpen(): Promise<void> {
 		const root = createRoot(this.containerEl.children[1]);
 		root.render(
@@ -78,15 +85,14 @@ export class SugarView extends TextFileView {
 		new Notice("Sugar View Opened");
 		this.onLoadFile(this.plugin.sugar.resolve_tfile(this.path));
 	}
-
+	/** 
+	* Runs when the sugar view is closed
+	**/
 	async onClose() {
 
 		if (this.plugin.settings.debug) {
 			console.log("closing sugar view")
 		}
-
 		this.leaf.detach();
 	}
-
-
 }

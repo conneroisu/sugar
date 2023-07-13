@@ -1,12 +1,12 @@
-import { Plugin, WorkspaceLeaf } from 'obsidian';
+import {Plugin, WorkspaceLeaf} from 'obsidian';
 
-import { DEFAULT_SETTINGS, SugarSettings } from './settings/obj/SugarSettings';
-import { SugarSettingTab } from './settings/obj/SugarSettingTab';
+import {DEFAULT_SETTINGS, SugarSettings} from './settings/obj/SugarSettings';
+import {SugarSettingTab} from './settings/obj/SugarSettingTab';
 
-import { Ninja } from './settings/obj/Ninja';
-import Sugar, { getSugarPath } from './obj/sugar';
-import { SUGAR_VIEW_TYPE, SugarView, FILE_EXTENSIONS } from './obj/view'
-import { CommandHandler } from './obj/command_handler';
+import {Ninja} from './settings/obj/Ninja';
+import Sugar from './obj/sugar';
+import {SUGAR_VIEW_TYPE, SugarView, FILE_EXTENSIONS} from './obj/view'
+import {CommandHandler} from './obj/command_handler';
 
 export default class SugarPlugin extends Plugin {
 	public settings: SugarSettings;
@@ -17,13 +17,11 @@ export default class SugarPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-
-		if (this.settings.debug) { console.log("loading sugar plugin") }
+		if (this.settings.debug) {console.log("Loading 🍩 Sugar plugin")}
 
 		this.sugar = new Sugar(this);
 
 		this.registerView(SUGAR_VIEW_TYPE, (leaf: WorkspaceLeaf) => new SugarView(leaf, this.sugar, this.active_sugar_path));
-
 
 		try {
 			this.registerExtensions(FILE_EXTENSIONS, SUGAR_VIEW_TYPE);
@@ -33,12 +31,10 @@ export default class SugarPlugin extends Plugin {
 
 		this.command_handler = new CommandHandler(this);
 
-		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new SugarSettingTab(this.app, this));
 
 		// registers an interval to continue to hide the sugar path of the plugin
 		this.registerInterval(window.setInterval(() => Ninja.hidePath(this.settings.sugar_directory), 10));
-
 	}
 
 	set_actice_sugar_path() {

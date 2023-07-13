@@ -1,4 +1,3 @@
-
 /**
  * This is the interface for the settings of the plugin, Sugar.
  **/

@@ -1,7 +1,10 @@
 
+
+/** 
+ * Ninja is a class that provides a set of static methods to hide and unhide elements in the DOM.
+ * This is used to hide the sugar path in the file explorer.
+ **/
 export class Ninja {
-	constructor() {
-	}
 	public static hidePath(path: string) {
 		this.changePathVisibility(path, true)
 	}

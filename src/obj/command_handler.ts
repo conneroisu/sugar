@@ -1,5 +1,8 @@
 import SugarPlugin from "src/main";
 
+/** 
+ * A class to handle the commands of the SugarPlugin
+ **/
 export class CommandHandler {
 	plugin: SugarPlugin;
 
@@ -31,7 +34,7 @@ export class CommandHandler {
 					this.plugin.sugar.open_sugar(file.path);
 				}
 
-				if (this.plugin.settings.debug) { console.log("Opened Sugar View") }
+				if (this.plugin.settings.debug) {console.log("Opened Sugar View")}
 			},
 		});
 		// this.plugin.addCommand({
