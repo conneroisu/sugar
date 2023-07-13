@@ -11,6 +11,7 @@ import {getASugarView} from "./util";
 export default class Sugar {
 	plugin: SugarPlugin;
 	app: App;
+	active_sugar_path: string;
 
 	constructor(sugar_plugin: SugarPlugin) {
 		this.plugin = sugar_plugin;
@@ -20,11 +21,9 @@ export default class Sugar {
 		}
 	}
 
-
-	/**
-	 * Command to open the sugar view of Type SugarView
-	 **/
 	async open_sugar(file_path: string) {
+		// sugar directory = file path - all / and \ + .sugar 
+		this.active_sugar_path = "sugar" + path.sep + file_path.replace(/\\/g, "/").replace(/\//g, "-") + ".sugar";
 		const open_dir = this.plugin.settings.sugar_directory + path.sep + file_path + ".sugar"
 		const df = await this.app.vault.create(open_dir, create_sugar_data(file_path));
 		const sugarView = getASugarView(file_path)
@@ -39,7 +38,7 @@ export default class Sugar {
 
 		const af = this.resolve_tfile(open_dir)
 		if (af instanceof TFile && af != undefined) {
-			const sugarView = getASugarView(this.plugin.active_sugar_path);
+			const sugarView = getASugarView(this.active_sugar_path);
 			if (sugarView) {
 				sugarView.file = af;
 			}
@@ -48,12 +47,11 @@ export default class Sugar {
 		return;
 	}
 
-
 	/** 
 	 * Processes the data contained in the sugar view 
 	 **/
 	processViewContent() {
-		const sugarView = getASugarView(this.plugin.active_sugar_path);
+		const sugarView = getASugarView(this.active_sugar_path);
 		if (sugarView) {
 			this.app.workspace.getLeavesOfType(SUGAR_VIEW_TYPE).forEach((leaf) => {
 				if (leaf.view instanceof SugarView) {
@@ -82,21 +80,11 @@ export default class Sugar {
 	}
 }
 
-
-/** 
- * Creates the data for a sugar file 
- **/
-export function create_sugar_data(sugar_dir: string): string {
-	if (!fs.existsSync(sugar_dir)) {
-		return "";
-	}
-
-	const files = fs.readdirSync(sugar_dir);
-
+export function create_sugar_data(file_path: string): string {
+	const files = fs.readdirSync(file_path);
 	const contents: string[] = [];
-
 	files.forEach((file) => {
-		const filePath = path.join(sugar_dir, file);
+		const filePath = path.join(file_path, file);
 		contents.push(fs.readFileSync(filePath, 'utf-8'));
 	});
 

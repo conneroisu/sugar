@@ -1,13 +1,11 @@
-import {
-	Notice, TextFileView, WorkspaceLeaf,
-	HoverPopover
-} from "obsidian";
+import {Notice, TextFileView, WorkspaceLeaf} from "obsidian";
 
 import * as React from "react";
 import Sugar from "./sugar";
 import {SugarReactView} from './sugar-react';
 import {createRoot} from "react-dom/client";
 import SugarPlugin from "src/main";
+import {resolve_tfile} from "./util";
 
 export const SUGAR_VIEW_TYPE = "sugar-view";
 export const FILE_EXTENSIONS = [".sugar"]
@@ -28,10 +26,6 @@ export class SugarView extends TextFileView {
 		this.sugar = sugar;
 		this.path = path;
 	}
-	dom: HTMLElement;
-	scrollDOM: HTMLElement;
-	contentDOM: HTMLElement;
-	hoverPopover: HoverPopover | null;
 	setViewData(data: string, clear?: boolean): void {
 		if (clear) {
 			this.data = "";
@@ -39,28 +33,17 @@ export class SugarView extends TextFileView {
 		this.data = data;
 	}
 
-	/** 
-	 * Get the view data of the sugar View 
-	 **/
 	getViewData(): string {
 		return this.data;
 	}
 
-	/** 
-	 * Get the view type of the sugar view 
-	 **/
 	getViewType(): string {
 		return SUGAR_VIEW_TYPE;
 	}
 
-
-	/** 
-	* Clears the sugar View 
-	**/
 	clear(): void {
 		this.data = "";
 	}
-
 
 	getDisplayText(): string {
 		return "Sugar View";
@@ -69,9 +52,7 @@ export class SugarView extends TextFileView {
 	getIcon(): string {
 		return SUGAR_ICON;
 	}
-	/** 
-	 * Runs when the sugar view is Opened 
-	 **/
+
 	async onOpen(): Promise<void> {
 		const root = createRoot(this.containerEl.children[1]);
 		root.render(
@@ -80,13 +61,10 @@ export class SugarView extends TextFileView {
 			</React.StrictMode>
 		);
 		new Notice("Sugar View Opened");
-		this.onLoadFile(this.plugin.sugar.resolve_tfile(this.path));
+		this.onLoadFile(resolve_tfile(this.path));
 	}
-	/** 
-	* Runs when the sugar view is closed
-	**/
-	async onClose() {
 
+	async onClose() {
 		if (this.plugin.settings.debug) {
 			console.log("closing sugar view")
 		}
