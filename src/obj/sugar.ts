@@ -1,9 +1,9 @@
 import SugarPlugin from "src/main";
-import {App, TFile, normalizePath} from "obsidian";
+import {App, TFile} from "obsidian";
 import {SugarView, SUGAR_VIEW_TYPE} from "./view";
 import * as fs from 'fs';
 import * as path from 'path';
-import {getASugarView} from "./util";
+import {getASugarView, resolve_tfile} from "./util";
 
 /** 
  * The main workhorse class for the sugar plugin 
@@ -36,7 +36,7 @@ export default class Sugar {
 			await leaves[0].openFile(df, {active: true});
 		}
 
-		const af = this.resolve_tfile(open_dir)
+		const af = resolve_tfile(open_dir)
 		if (af instanceof TFile && af != undefined) {
 			const sugarView = getASugarView(this.active_sugar_path);
 			if (sugarView) {
@@ -61,23 +61,6 @@ export default class Sugar {
 		}
 	}
 
-	/** 
-	 * Gives a TFile for a given vault path 
-	 **/
-	public resolve_tfile(file_str: string): TFile {
-		if (this.plugin.settings.debug) {console.log("Normalizing file path: " + file_str)}
-		file_str = normalizePath(file_str);
-
-		const file = app.vault.getAbstractFileByPath(file_str);
-		if (!file) {
-			throw new Error(`File "${file_str}" doesn't exist`);
-		}
-		if (!(file instanceof TFile)) {
-			throw new Error(`${file_str} is a folder, not a file`);
-		}
-
-		return file;
-	}
 }
 
 export function create_sugar_data(file_path: string): string {
