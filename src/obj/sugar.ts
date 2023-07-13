@@ -12,9 +12,6 @@ export default class Sugar {
 	plugin: SugarPlugin;
 	app: App;
 
-	/**
-	 * Constructs a Sugar Rock object 
-	 **/
 	constructor(sugar_plugin: SugarPlugin) {
 		this.plugin = sugar_plugin;
 		this.app = this.plugin.app;

@@ -13,9 +13,6 @@ export const SUGAR_VIEW_TYPE = "sugar-view";
 export const FILE_EXTENSIONS = [".sugar"]
 export const SUGAR_ICON = 'mountain'
 
-/** 
- * Sugar View
- **/
 export class SugarView extends TextFileView {
 	sugar: Sugar;
 	path: string;
@@ -36,7 +33,6 @@ export class SugarView extends TextFileView {
 	contentDOM: HTMLElement;
 	hoverPopover: HoverPopover | null;
 	setViewData(data: string, clear?: boolean): void {
-
 		if (clear) {
 			this.data = "";
 		}

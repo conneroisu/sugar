@@ -8,7 +8,6 @@ export class CommandHandler {
 
 	constructor(plugin: SugarPlugin) {
 		this.plugin = plugin;
-
 		if (this.plugin.settings.debug) {
 			console.log("Loading the Command Handler class.")
 		}
@@ -20,9 +19,8 @@ export class CommandHandler {
 	**/
 	setup(): void {
 
-		if (this.plugin.settings.debug) {
-			console.log("Setup Method of Command Handler is running.")
-		}
+		if (this.plugin.settings.debug) {console.log("Setup Method of Command Handler is running.")}
+
 		this.plugin.addCommand({
 			id: "toggle-sugar-view",
 			name: "Sugar View Open",
@@ -42,7 +40,6 @@ export class CommandHandler {
 		// 	name: "Sugar Insert Character Inserted",
 		// 	callback: () => {
 		// 		// this.plugin.sugar.insert_sugar_template_character()
-
 		// 	},
 		// });
 		if (this.plugin.settings.debug) {

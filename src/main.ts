@@ -12,7 +12,6 @@ export default class SugarPlugin extends Plugin {
 	public settings: SugarSettings;
 	public sugar: Sugar;
 	public command_handler: CommandHandler;
-	public active_sugar_path: string;
 
 	async onload() {
 		await this.loadSettings();
@@ -21,7 +20,7 @@ export default class SugarPlugin extends Plugin {
 
 		this.sugar = new Sugar(this);
 
-		this.registerView(SUGAR_VIEW_TYPE, (leaf: WorkspaceLeaf) => new SugarView(leaf, this.sugar, this.active_sugar_path));
+		this.registerView(SUGAR_VIEW_TYPE, (leaf: WorkspaceLeaf) => new SugarView(leaf, this.sugar, this.sugar.active_sugar_path));
 
 		try {
 			this.registerExtensions(FILE_EXTENSIONS, SUGAR_VIEW_TYPE);
@@ -40,11 +39,10 @@ export default class SugarPlugin extends Plugin {
 	set_actice_sugar_path() {
 		const current = this.app.workspace.getActiveFile();
 		if (current && current.path.endsWith(".sugar")) {
-			this.active_sugar_path = current.path;
+			this.sugar.active_sugar_path = current.path;
 			return;
 		}
 	}
-
 
 	onunload() {
 
