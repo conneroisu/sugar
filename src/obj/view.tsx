@@ -1,24 +1,21 @@
-import {Notice, TextFileView, WorkspaceLeaf} from "obsidian";
+import { Notice, TextFileView, WorkspaceLeaf } from "obsidian";
 
 import * as React from "react";
 import Sugar from "./sugar";
-import {SugarReactView} from './sugar-react';
-import {createRoot} from "react-dom/client";
+import { SugarReactView } from "./sugar-react";
+import { createRoot } from "react-dom/client";
 import SugarPlugin from "src/main";
-import {resolve_tfile} from "./util";
+import { resolve_tfile } from "./util";
 
 export const SUGAR_VIEW_TYPE = "sugar-view";
-export const FILE_EXTENSIONS = [".sugar"]
-export const SUGAR_ICON = 'mountain'
+export const FILE_EXTENSIONS = [".sugar"];
+export const SUGAR_ICON = "mountain";
 
 export class SugarView extends TextFileView {
 	sugar: Sugar;
 	path: string;
 	plugin: SugarPlugin;
 
-	/** 
-	 * Constructs the sugar view 
-	 **/
 	constructor(leaf: WorkspaceLeaf, sugar: Sugar, path: string) {
 		super(leaf);
 		this.icon = SUGAR_ICON;
@@ -26,6 +23,7 @@ export class SugarView extends TextFileView {
 		this.sugar = sugar;
 		this.path = path;
 	}
+
 	setViewData(data: string, clear?: boolean): void {
 		if (clear) {
 			this.data = "";
@@ -66,7 +64,7 @@ export class SugarView extends TextFileView {
 
 	async onClose() {
 		if (this.plugin.settings.debug) {
-			console.log("closing sugar view")
+			console.log("closing sugar view");
 		}
 		this.leaf.detach();
 	}

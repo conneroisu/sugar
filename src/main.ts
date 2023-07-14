@@ -6,7 +6,7 @@ import {SugarSettingTab} from './settings/obj/SugarSettingTab';
 import {Ninja} from './settings/obj/Ninja';
 import Sugar from './obj/sugar';
 import {SUGAR_VIEW_TYPE, SugarView, FILE_EXTENSIONS} from './obj/view'
-import {CommandHandler} from './obj/command_handler';
+import {CommandHandler} from './command_handler';
 
 export default class SugarPlugin extends Plugin {
 	public settings: SugarSettings;
