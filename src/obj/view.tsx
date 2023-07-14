@@ -1,5 +1,4 @@
 import { Notice, TextFileView, WorkspaceLeaf } from "obsidian";
-
 import * as React from "react";
 import Sugar from "./sugar";
 import { SugarReactView } from "./sugar-react";
