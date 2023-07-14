@@ -7,6 +7,9 @@ const wrapAround = (value: number, size: number): number => {
 	return ((value % size) + size) % size;
 };
 
+/**
+ * Suggestion class specifically for folders for the settings of the sugar plugin
+ **/
 class Suggest<T> {
 	private owner: ISuggestOwner<T>;
 	private values: T[];
@@ -14,7 +17,11 @@ class Suggest<T> {
 	private selectedItem: number;
 	private containerEl: HTMLElement;
 
-	constructor(owner: ISuggestOwner<T>, containerEl: HTMLElement, scope: Scope) {
+	constructor(
+		owner: ISuggestOwner<T>,
+		containerEl: HTMLElement,
+		scope: Scope
+	) {
 		this.owner = owner;
 		this.containerEl = containerEl;
 

@@ -1,4 +1,3 @@
-import { TFile } from "obsidian";
 import SugarPlugin from "./main";
 import { resolve_tfile } from "./obj/util";
 
