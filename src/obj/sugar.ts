@@ -1,9 +1,9 @@
 import SugarPlugin from "src/main";
-import { App, TFile } from "obsidian";
-import { SugarView, SUGAR_VIEW_TYPE } from "./view";
+import {App, TFile} from "obsidian";
 import * as path from "path";
-import { getASugarView, resolve_tfile } from "./util";
-import { create_content_list } from "./util";
+import {getASugarView, resolve_tfile} from "./util";
+import {create_content_list} from "./util";
+import {SugarView, SUGAR_VIEW_TYPE} from "./view";
 
 /**
  * The main workhorse class for the sugar plugin
@@ -24,15 +24,17 @@ export default class Sugar {
 	async open_sugar(file_path: string) {
 		// sugar directory = file path - all / and \ + .sugar
 		this.active_sugar_path =
-			"sugar" +
+			"sug" +
 			path.sep +
 			file_path.replace(/\\/g, "/").replace(/\//g, "-") +
-			".sugar";
+			".sug";
+		console.log("opening sugar: " + this.active_sugar_path);
 		const open_dir =
 			this.plugin.settings.sugar_directory +
 			path.sep +
 			file_path +
-			".sugar";
+			".sug";
+		console.log("Sugar Directory" + this.plugin.settings.sugar_directory);
 		// create df a TFile for the sugar file
 		let df: TFile;
 		// remove the file name from the file_path and set to / if is at the base of the vault
@@ -41,41 +43,26 @@ export default class Sugar {
 				open_dir,
 				create_content_list(file_path, this.plugin)
 			);
+			// log the contents of the file
+			console.log(
+				"Created file contents: " + this.plugin.app.vault.cachedRead(df)
+			);
 		} catch (e) {
-			df = resolve_tfile(file_path);
+			df = resolve_tfile(open_dir);
+			console.log(
+				"Found file contents: " +
+				(await this.plugin.app.vault.cachedRead(df))
+			);
 		}
-		const sugarView = getASugarView(file_path);
+		// console.log("df: " + df);
+		const sugarView = getASugarView(df.path);
+		// Create a new leaf
+		const leaf = this.app.workspace.getLeaf();
+		// console.log("leaf: " + leaf);
+		leaf.open(sugarView);
+		leaf.openFile(df);
+		sugarView.file = df;
 
-		if (df && sugarView) {
-			sugarView.file = df;
-		}
-		const leaves =
-			this.plugin.app.workspace.getLeavesOfType(SUGAR_VIEW_TYPE);
-		if (leaves.length > 0) {
-			await leaves[0].openFile(df, { active: true });
-		}
-
-		const af = resolve_tfile(open_dir);
-		if (af instanceof TFile && af != undefined) {
-			const sugarView = getASugarView(this.active_sugar_path);
-			if (sugarView) {
-				sugarView.file = af;
-			}
-		}
-		getASugarView(file_path);
 		return;
-	}
-
-	processViewContent() {
-		const sugarView = getASugarView(this.active_sugar_path);
-		if (sugarView) {
-			this.app.workspace
-				.getLeavesOfType(SUGAR_VIEW_TYPE)
-				.forEach((leaf) => {
-					if (leaf.view instanceof SugarView) {
-						leaf.openFile(sugarView.file, { active: true });
-					}
-				});
-		}
 	}
 }

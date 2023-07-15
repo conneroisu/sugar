@@ -1,12 +1,13 @@
-import { Plugin, WorkspaceLeaf } from "obsidian";
+import {ViewPlugin, Plugin, WorkspaceLeaf, MarkdownView} from "obsidian";
 
-import { DEFAULT_SETTINGS, SugarSettings } from "./settings/obj/SugarSettings";
-import { SugarSettingTab } from "./settings/obj/SugarSettingTab";
+import {DEFAULT_SETTINGS, SugarSettings} from "./settings/obj/SugarSettings";
+import {SugarSettingTab} from "./settings/obj/SugarSettingTab";
 
-import { Ninja } from "./settings/obj/Ninja";
+import {Ninja} from "./settings/obj/Ninja";
+import {SUGAR_VIEW_TYPE, SugarView, FILE_EXTENSIONS} from "./obj/view";
+
+import {CommandHandler} from "./command_handler";
 import Sugar from "./obj/sugar";
-import { SUGAR_VIEW_TYPE, SugarView, FILE_EXTENSIONS } from "./obj/view";
-import { CommandHandler } from "./command_handler";
 
 export default class SugarPlugin extends Plugin {
 	public settings: SugarSettings;
@@ -24,15 +25,10 @@ export default class SugarPlugin extends Plugin {
 
 		this.registerView(
 			SUGAR_VIEW_TYPE,
-			(leaf: WorkspaceLeaf) =>
-				new SugarView(leaf, this.sugar, this.sugar.active_sugar_path)
+			(leaf: WorkspaceLeaf) => new SugarView(leaf, this.sugar)
 		);
 
-		try {
-			this.registerExtensions(FILE_EXTENSIONS, SUGAR_VIEW_TYPE);
-		} catch (error) {
-			console.log(`Existing file extension ${SUGAR_VIEW_TYPE}`);
-		}
+		this.registerExtensions(FILE_EXTENSIONS, SUGAR_VIEW_TYPE);
 
 		this.command_handler = new CommandHandler(this);
 

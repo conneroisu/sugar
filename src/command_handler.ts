@@ -1,5 +1,5 @@
 import SugarPlugin from "./main";
-import { resolve_tfile } from "./obj/util";
+import {resolve_tfile} from "./obj/util";
 
 /**
  * A class to handle the commands of the SugarPlugin
@@ -35,7 +35,9 @@ export class CommandHandler {
 				}
 
 				if (this.plugin.settings.debug) {
-					console.log("Opened Sugar View");
+					console.log(
+						"Tried to open Sugar View for file: " + file?.path
+					);
 				}
 			},
 		});

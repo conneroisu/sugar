@@ -1,5 +1,5 @@
-import { SugarView, SUGAR_VIEW_TYPE } from "./view";
-import { normalizePath, TFile, View } from "obsidian";
+import {SugarView, SUGAR_VIEW_TYPE} from "./view";
+import {normalizePath, TFile, View} from "obsidian";
 import * as fs from "fs";
 import * as path from "path";
 import SugarPlugin from "src/main";
@@ -51,7 +51,6 @@ export function create_content_list(
 		//remove the last characters before the last sep
 		folder_path = file_path.substring(0, file_path.lastIndexOf(path.sep));
 	}
-	console.log("file path: " + folder_path);
 	const files = fs.readdirSync(folder_path);
 	let result = "";
 	// combine the files into a single string with newlines
