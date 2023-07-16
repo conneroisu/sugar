@@ -1,10 +1,8 @@
-import {ViewPlugin, Plugin, WorkspaceLeaf, MarkdownView} from "obsidian";
+import {Plugin} from "obsidian";
 
-import {DEFAULT_SETTINGS, SugarSettings} from "./settings/obj/SugarSettings";
-import {SugarSettingTab} from "./settings/obj/SugarSettingTab";
-
-import {Ninja} from "./settings/obj/Ninja";
-import {SUGAR_VIEW_TYPE, SugarView, FILE_EXTENSIONS} from "./obj/view";
+import {DEFAULT_SETTINGS, SugarSettings} from "./settings/SugarSettings";
+import {SugarSettingTab} from "./settings/SugarSettingTab";
+import {Ninja} from "./settings/Ninja";
 
 import {CommandHandler} from "./command_handler";
 import Sugar from "./obj/sugar";
@@ -17,18 +15,15 @@ export default class SugarPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
+		// add ignore to the vault .config json file
+
 		if (this.settings.debug) {
 			console.log("Loading 🍩 Sugar plugin");
 		}
 
 		this.sugar = new Sugar(this);
 
-		this.registerView(
-			SUGAR_VIEW_TYPE,
-			(leaf: WorkspaceLeaf) => new SugarView(leaf, this.sugar)
-		);
-
-		this.registerExtensions(FILE_EXTENSIONS, SUGAR_VIEW_TYPE);
+		this.registerExtensions(["sugar"], "markdown");
 
 		this.command_handler = new CommandHandler(this);
 
@@ -41,14 +36,6 @@ export default class SugarPlugin extends Plugin {
 				10
 			)
 		);
-	}
-
-	set_actice_sugar_path() {
-		const current = this.app.workspace.getActiveFile();
-		if (current && current.path.endsWith(".sugar")) {
-			this.sugar.active_sugar_path = current.path;
-			return;
-		}
 	}
 
 	onunload() {}
