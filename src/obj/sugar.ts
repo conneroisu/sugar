@@ -20,11 +20,13 @@ export default class Sugar {
 
 	async open_sugar(): Promise<void> {
 		// get the active workspace leaf
-		const leaf = this.app.workspace.activeLeaf;
-		const file_path = leaf?.view.file.path;
+		const file_path = this.app.workspace.getActiveFile();
+		const leaf = this.app.workspace.getMostRecentLeaf();
 
 		if (file_path) {
-			const latent_sugar_file = await this.getLatentSugarFile(file_path);
+			const latent_sugar_file = await this.getLatentSugarFile(
+				file_path.path
+			);
 			leaf?.openFile(latent_sugar_file, {active: true});
 		}
 	}
@@ -39,6 +41,7 @@ export default class Sugar {
 
 		const latent_sugar_file_path =
 			this.plugin.settings.sugar_directory + sep + "♺" + path;
+
 		try {
 			latent_sugar_file = await this.app.vault.create(
 				latent_sugar_file_path,
