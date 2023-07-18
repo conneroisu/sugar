@@ -1,11 +1,4 @@
-import {
-	normalizePath,
-	addIcon,
-	getIcon,
-	TAbstractFile,
-	TFile,
-	TFolder,
-} from "obsidian";
+import { normalizePath, TAbstractFile, TFile, TFolder, Vault } from "obsidian";
 import * as path from "path";
 
 /**
@@ -34,61 +27,23 @@ export function get_folder_path(file_path: string): string {
 	}
 	return file_path;
 }
-/**
- * Creates a list of all the files in a folder given a file path within the obsidian vault
- **/
-export function create_content_list(file_path: string): string {
-	file_path = normalizePath(file_path);
-	// remove the file name and extension from the end of the file path
-	let folder_path = file_path.substring(0, file_path.lastIndexOf(path.sep));
-	// if the file path is at the root of the vault(doesn't have any seps), set it to /
-	folder_path = get_folder_path(file_path);
 
-	// create a TFolder fo rthe folder path
-	const files: TAbstractFile[] = [];
-	const files_paths: string[] = [];
-
-	const folder: TFolder = this.app.vault.getAbstractFileByPath(
-		folder_path
-	) as TFolder;
-
-	folder.children.forEach((file) => {
-		if (file instanceof TAbstractFile) {
-			// if the file is a folder insert a / at the end and insert at the beginning of the files
-			if (file instanceof TFolder) {
-				files_paths.unshift(file.path + path.sep);
-				files.unshift(file);
-			} else {
-				files_paths.push(file.path);
-				files.push(file);
-			}
-		}
-	});
-
-	//const SFiles = files_paths.join("\n"); // the string of files_paths
-	//const separator = "   "; // the separator between the file and it's logo
-	// const icon = [];
-
-	// files.forEach((file) => {
-	// // gets the end of the extension of the file
-	// 	logos = get_icon(file.path.substring(file.path.lastIndexOf(".")));
-	// }
-
-	const content = "";
-
-	return files_paths.join("\n");
+export function ensure_sugar_directory(sugar_directory: string, vault: Vault) {
+	// Upon construction, sugar should ensure that the sugar directory exists
+	if (!this.app.vault.getAbstractFileByPath(sugar_directory)) {
+		this.app.vault.createFolder(sugar_directory);
+	}
 }
 
-// function get_icon(file_extension: string): any {
-
-// 	// the list of icons using getIcon
-// 	const markdown = getIcon("markdown"),
-
-// 	// if the file extension is not in the list of icons, return the default icon
-// 	if (!(file_extension in icons)) {
-// 		return icons["default"];
-// 	} else {
-// 		return icons[file_extension];
-// 	}
-
-// }
+export function deleteOldSugarFiles(
+	vault: Vault,
+	sugar_directory: string
+): void {
+	// Upon cosntuction, sugar should delete all sugar files inside of the sugar_directory
+	for (const file of vault.getFiles()) {
+		if (file.path.startsWith(sugar_directory)) {
+			vault.delete(file);
+		}
+	}
+}
+function checkRenamed(line: string): void {}

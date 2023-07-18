@@ -29,6 +29,21 @@ export class CommandHandler {
 				this.plugin.sugar.open_sugar();
 			},
 		});
+		this.plugin.addCommand({
+			id: "save-sugar-view",
+			name: "Sugar View Saved",
+			callback: () => {
+				this.plugin.sugar.save_sugar();
+			},
+		});
+
+		this.plugin.addCommand({
+			id: "select-sugar-entry",
+			name: "Select Sugar Entry",
+			callback: () => {
+				this.plugin.sugar.select_entry();
+			},
+		});
 		// this.plugin.addCommand({
 		// 	id: "insert-sugar-template-character",
 		// 	name: "Sugar Insert Character Inserted",
