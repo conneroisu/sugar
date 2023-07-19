@@ -16,16 +16,13 @@ import {
 import {sep} from "path";
 export const menu_sep = "    ";
 /**
- * The main workhorse class for the sugar plugin
+ * The main workhorse class for the sugar plugin.
  **/
 export default class Sugar {
 	plugin: SugarPlugin;
 	app: App;
-	// an array list of sugar files
 	files: TFile[] = [];
 	contents: string[] = [];
-	fields: string[][] = [];
-	active_file: TFile | null = null;
 	table: Record<string, string[]> = {};
 
 	constructor(sugar_plugin: SugarPlugin) {
@@ -41,14 +38,11 @@ export default class Sugar {
 		);
 	}
 
-	public getActiveViewOfType() {
-		return this.app.workspace.getActiveViewOfType(MarkdownView);
-	}
 	select_entry() {
 		// get the cursor position from obsidian editor
 		const markdownView = this.getActiveViewOfType();
 		if (markdownView) {
-			const editor = markdownView.editor;
+			const {editor} = markdownView;
 			const cursor = editor.getCursor();
 			const line = editor.getLine(cursor.line);
 			const line_text = line.slice(0, undefined);
@@ -76,7 +70,7 @@ export default class Sugar {
 			const latent_sugar_file = await this.getLatentSugarFile(
 				file_path.path
 			);
-			leaf?.openFile(latent_sugar_file, {active: true});
+			await leaf?.openFile(latent_sugar_file, {active: true});
 			this.files.push(latent_sugar_file);
 			this.contents.push(
 				await this.app.vault.cachedRead(latent_sugar_file)
@@ -132,23 +126,7 @@ export default class Sugar {
 		// split the old content by new line
 		const old_content_lines = old_content.split("\n");
 		// match the old content lines with the new content lines id
-		// and if the id is the same, but the file name is not then the file has been renamed
-		const matched_lines = {};
-		old_content_lines.forEach((oline) => {
-			new_content_lines.forEach((nline) => {
-				// get the id inside of the a href
-				const old_id = oline.match(/(?<=\().*?(?=\))/g);
-				const new_id = nline.match(/(?<=\().*?(?=\))/g);
-				if (old_id && new_id) {
-					if (old_id == new_id) {
-						// checkRenamed(old_id, new_id)
-					}
-				}
-			});
-		});
-		// old_content_lines.forEach((line) => {
-		// 	checkRenamed(line);
-		// }
+		// and if the id is the same, but the file name is not the same, then the file has been renamed
 		// if the new content has more lines than the old content, then a new file has been added
 		if (new_content_lines.length > old_content_lines.length) {
 			// get the file without an id
@@ -200,6 +178,10 @@ export default class Sugar {
 
 		return files_paths.join("\n");
 	}
+
+	/**
+	 * Generates a random id for a line in a sugar files.
+	 **/
 	generate_id(): string {
 		return (
 			"<a href=" +
@@ -208,20 +190,17 @@ export default class Sugar {
 			"</a>"
 		);
 	}
+
 	/**
-	 * Returns the id of a line in a sugar file (within the a href)
+	 * Returns the id of a line in a sugar file (within the a href).
 	 **/
 	parse_id(line: string): string {
 		return line.split("<a href=")[1].split(">")[0];
 	}
+	/**
+	 * Returns the active view of the workspace if it is a markdown view.
+	 **/
+	public getActiveViewOfType() {
+		return this.app.workspace.getActiveViewOfType(MarkdownView);
+	}
 }
-// function checkRenamed(oline: string, nline: string): void {
-// 	if (oline != nline) {
-// 		// get all files in teh vault
-// 		const files = this.app.vault.getFiles();
-// 		// rename the file to the new file name since it has the same id
-// 		files.forEach((file) => {
-
-// 		}
-// 	}
-// }

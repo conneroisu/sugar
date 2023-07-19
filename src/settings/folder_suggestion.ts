@@ -12,7 +12,8 @@ export class FolderSuggest extends TextInputSuggest<TFolder> {
 		abstractFiles.forEach((folder: TAbstractFile) => {
 			if (
 				folder instanceof TFolder &&
-				folder.path.toLowerCase().contains(lowerCaseInputStr)
+				folder.path.toLowerCase().contains(lowerCaseInputStr) &&
+				folder.path != "/"
 			) {
 				folders.push(folder);
 			}
