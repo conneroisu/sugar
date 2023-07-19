@@ -1,4 +1,4 @@
-import { normalizePath, TAbstractFile, TFile, TFolder, Vault } from "obsidian";
+import {normalizePath, TAbstractFile, TFile, TFolder, Vault} from "obsidian";
 import * as path from "path";
 
 /**
@@ -46,4 +46,3 @@ export function deleteOldSugarFiles(
 		}
 	}
 }
-function checkRenamed(line: string): void {}

@@ -23,7 +23,7 @@ export class CommandHandler {
 		}
 
 		this.plugin.addCommand({
-			id: "toggle-sugar-view",
+			id: "open-sugar-view",
 			name: "Sugar View Open",
 			callback: () => {
 				this.plugin.sugar.open_sugar();
