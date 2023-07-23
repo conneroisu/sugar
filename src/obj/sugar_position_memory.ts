@@ -6,22 +6,18 @@ import {
 	EphemeralState,
 } from "obsidian";
 import SugarPlugin from "src/main";
-import {
-	CURSOR_DB_FLUSH_INTERVAL,
-	CURSOR_DB_NAME,
-	CURSOR_SAVE_INTERVAL,
-} from "./constants";
+import { CURSOR_DB_NAME, CURSOR_SAVE_INTERVAL } from "./constants";
 import { sep } from "path";
-import { CURSOR_OPEN_DELAY } from './constants';
+import { CURSOR_OPEN_DELAY } from "./constants";
 
 interface EmpherialState {
 	cursor?: {
 		from: {
-			ch: number;
+			character: number;
 			line: number;
 		};
 		to: {
-			ch: number;
+			character: number;
 			line: number;
 		};
 	};
@@ -31,35 +27,31 @@ export default class SugarPostionMemory {
 	plugin: SugarPlugin;
 	debug: boolean;
 	app: App;
-	db_name: typeof CURSOR_DB_NAME;
-	saveInterval: typeof CURSOR_SAVE_INTERVAL;
-	flushInterval: typeof CURSOR_DB_FLUSH_INTERVAL;
 	db: { [file_path: string]: EmpherialState };
-	lastSavedDB: { [file_path: string]: EmpherialState };
+	lastSavedCursorPositionDB: { [file_path: string]: EmpherialState };
 	lastEphemerialState: EmpherialState;
-	lastLoadedFile: string;
+	latestLoadedFile: string;
 	loadingFile: boolean;
 
 	constructor(sugar_plugin: SugarPlugin) {
 		this.plugin = sugar_plugin;
 		this.app = this.plugin.app;
 		this.debug = this.plugin.settings.debug;
-		this.db_name = CURSOR_DB_NAME;
-		this.saveInterval = CURSOR_SAVE_INTERVAL;
-		this.flushInterval = CURSOR_DB_FLUSH_INTERVAL;
 		this.init_sugar_position_memory();
 	}
 
 	async init_sugar_position_memory(): Promise<void> {
 		try {
-			this.db = await this.readDb() as { [file_path: string]: EmpherialState };
-			this.lastSavedDB = await this.readDb();
+			this.db = (await this.readDb()) as {
+				[file_path: string]: EmpherialState;
+			};
+			this.lastSavedCursorPositionDB = await this.readDb();
 		} catch (e) {
 			console.error(
 				"Remember Cursor Position plugin can't read database: " + e
 			);
 			this.db = {};
-			this.lastSavedDB = {};
+			this.lastSavedCursorPositionDB = {};
 		}
 		this.plugin.registerInterval(
 			window.setInterval(() => this.checkEphemeralStateChanged(), 100)
@@ -67,7 +59,10 @@ export default class SugarPostionMemory {
 
 		this.plugin.registerInterval(
 			window.setInterval(
-				() => this.writeDb(this.db as { [file_path: string]: EphemeralState }),
+				() =>
+					this.writeDb(
+						this.db as { [file_path: string]: EphemeralState }
+					),
 				CURSOR_SAVE_INTERVAL
 			)
 		);
@@ -81,7 +76,9 @@ export default class SugarPostionMemory {
 
 		this.plugin.registerEvent(
 			this.app.workspace.on("quit", () => {
-				return this.writeDb(this.db as { [file_path: string]: EphemeralState });
+				return this.writeDb(
+					this.db as { [file_path: string]: EphemeralState }
+				);
 			})
 		);
 
@@ -111,10 +108,12 @@ export default class SugarPostionMemory {
 		const fileName = this.app.workspace.getActiveFile()?.path;
 
 		//waiting for load new file
-		if (!fileName ||
-			!this.lastLoadedFile ||
-			fileName != this.lastLoadedFile ||
-			this.loadingFile) {
+		if (
+			!fileName ||
+			!this.latestLoadedFile ||
+			fileName != this.latestLoadedFile ||
+			this.loadingFile
+		) {
 			return;
 		}
 
@@ -126,7 +125,10 @@ export default class SugarPostionMemory {
 
 		if (
 			!isNaN(st.scroll as number) &&
-			!this.isEphemeralStatesEquals(st, this.lastEphemerialState as EphemeralState)
+			!this.isEphemeralStatesEquals(
+				st,
+				this.lastEphemerialState as EphemeralState
+			)
 		) {
 			this.saveEphemeralState(st);
 			this.lastEphemerialState = st;
@@ -177,7 +179,7 @@ export default class SugarPostionMemory {
 
 	async saveEphemeralState(st: EphemeralState) {
 		const fileName = this.app.workspace.getActiveFile()?.path;
-		if (fileName && fileName == this.lastLoadedFile) {
+		if (fileName && fileName == this.latestLoadedFile) {
 			//do not save if file changed or was not loaded
 			this.db[fileName] = st;
 		}
@@ -186,16 +188,16 @@ export default class SugarPostionMemory {
 	async restoreEphemeralState() {
 		const fileName = this.app.workspace.getActiveFile()?.path;
 
-		if (fileName && this.loadingFile && this.lastLoadedFile == fileName) {
+		if (fileName && this.loadingFile && this.latestLoadedFile == fileName) {
 			return;
 		}
 
 		this.loadingFile = true;
 
-		if (this.lastLoadedFile != fileName) {
+		if (this.latestLoadedFile != fileName) {
 			this.lastEphemerialState = {};
 			if (fileName) {
-				this.lastLoadedFile = fileName;
+				this.latestLoadedFile = fileName;
 			}
 
 			if (fileName) {
@@ -209,6 +211,7 @@ export default class SugarPostionMemory {
 							.getActiveViewOfType(MarkdownView)
 							?.currentMode?.getScroll();
 						if (scroll_res != null) {
+							// eslint-disable-next-line @typescript-eslint/no-unused-vars
 							scroll = scroll_res;
 						} else {
 							break;
@@ -218,7 +221,6 @@ export default class SugarPostionMemory {
 				}
 				this.lastEphemerialState = st;
 			}
-
 			this.loadingFile = false;
 		}
 	}
@@ -227,9 +229,7 @@ export default class SugarPostionMemory {
 		let db: { [file_path: string]: EphemeralState } = {};
 
 		if (await this.app.vault.adapter.exists(CURSOR_DB_NAME)) {
-			const data = await this.app.vault.adapter.read(
-				CURSOR_DB_NAME
-			);
+			const data = await this.app.vault.adapter.read(CURSOR_DB_NAME);
 			db = JSON.parse(data);
 		}
 
@@ -246,19 +246,31 @@ export default class SugarPostionMemory {
 			this.app.vault.adapter.mkdir(newParentFolder);
 		}
 
-		if (JSON.stringify(this.db) !== JSON.stringify(this.lastSavedDB)) {
-			this.app.vault.adapter.write(
-				CURSOR_DB_NAME,
-				JSON.stringify(db)
-			);
-			this.lastSavedDB = JSON.parse(JSON.stringify(db));
+		if (
+			JSON.stringify(this.db) !==
+			JSON.stringify(this.lastSavedCursorPositionDB)
+		) {
+			this.app.vault.adapter.write(CURSOR_DB_NAME, JSON.stringify(db));
+			this.lastSavedCursorPositionDB = JSON.parse(JSON.stringify(db));
 		}
 	}
 
 	getEphemeralState(): EphemeralState {
 		// let state: EphemeralState = this.app.workspace.getActiveViewOfType(MarkdownView)?.getEphemeralState(); //doesn't work properly
 
-		const state: EphemeralState = {};
+		const state: EphemeralState = {
+			cursor: {
+				from: {
+					ch: 0,
+					line: 0,
+				},
+				to: {
+					ch: 0,
+					line: 0,
+				},
+			},
+		};
+
 		state.scroll = Number(
 			this.app.workspace
 				.getActiveViewOfType(MarkdownView)
@@ -273,11 +285,11 @@ export default class SugarPostionMemory {
 			if (from && to) {
 				state.cursor = {
 					from: {
-						ch: from.ch,
+						character: from.ch,
 						line: from.line,
 					},
 					to: {
-						ch: to.ch,
+						character: to.ch,
 						line: to.line,
 					},
 				};
