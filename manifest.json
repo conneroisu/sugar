@@ -1,10 +1,10 @@
 {
-	"id": "sugar-plugin",
-	"name": "Sugar Plugin",
+	"id": "sugar",
+	"name": "Sugar",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
 	"description": "A file explorer inside of Obsidian allowing for the editing the file system as if it were a note/buffer.",
-	"author": "Obsidian",
+	"author": "Conner Ohnesorge",
 	"authorUrl": "https://connerohnesorge.mixa.site",
 	"fundingUrl": "https://kofi/connero",
 	"isDesktopOnly": false

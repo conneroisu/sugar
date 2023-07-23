@@ -38,6 +38,14 @@ export class CommandHandler {
 		});
 
 		this.plugin.addCommand({
+			id: "update-sugar-view",
+			name: "Update/Reload Sugar View",
+			callback: () => {
+				this.plugin.sugar.reload_sugar();
+			},
+		});
+
+		this.plugin.addCommand({
 			id: "select-sugar-entry",
 			name: "Select Sugar Entry",
 			callback: () => {

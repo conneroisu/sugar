@@ -1,8 +1,8 @@
 {
-	"name": "sugar-plugin",
+	"name": "sugar",
 	"version": "1.0.0",
 	"description": "A plugin allowing for interactions with the file system in a note/buffer like the oil plugin for neovim.",
-	"main": "main.js",
+	"main": "src/main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",

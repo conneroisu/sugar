@@ -1,4 +1,4 @@
-import { normalizePath, TFile, TFolder, Vault } from "obsidian";
+import {normalizePath, TFile, TFolder, Vault} from "obsidian";
 import * as path from "path";
 
 /**
@@ -17,13 +17,13 @@ export function resolve_tfile(file_str: string): TFile {
 	return file;
 }
 
-export function resolve_tfolder(folder_str: string): TFolder | TFile {
+export function resolve_tfolder(folder_str: string): TFolder | TFile | null {
 	folder_str = normalizePath(folder_str);
 
 	const folder = app.vault.getAbstractFileByPath(folder_str);
 
 	if (!folder) {
-		throw new Error(`Folder "${folder_str}" doesn't exist`);
+		return null;
 	}
 	if (!(folder instanceof TFolder)) {
 		return resolve_tfile(folder_str);
