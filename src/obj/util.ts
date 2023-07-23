@@ -1,4 +1,4 @@
-import {normalizePath, TAbstractFile, TFile, TFolder, Vault} from "obsidian";
+import { normalizePath, TFile, TFolder, Vault } from "obsidian";
 import * as path from "path";
 
 /**
@@ -17,6 +17,20 @@ export function resolve_tfile(file_str: string): TFile {
 	return file;
 }
 
+export function resolve_tfolder(folder_str: string): TFolder | TFile {
+	folder_str = normalizePath(folder_str);
+
+	const folder = app.vault.getAbstractFileByPath(folder_str);
+
+	if (!folder) {
+		throw new Error(`Folder "${folder_str}" doesn't exist`);
+	}
+	if (!(folder instanceof TFolder)) {
+		return resolve_tfile(folder_str);
+	}
+	return folder;
+}
+
 export function get_folder_path(file_path: string): string {
 	// if the file path is at the root of the vault(doesn't have any seps), set it to /
 	if (file_path.indexOf(path.sep) === -1) {
@@ -30,8 +44,9 @@ export function get_folder_path(file_path: string): string {
 
 export function ensure_sugar_directory(sugar_directory: string, vault: Vault) {
 	// Upon construction, sugar should ensure that the sugar directory exists
-	if (!this.app.vault.getAbstractFileByPath(sugar_directory)) {
-		this.app.vault.createFolder(sugar_directory);
+	const folder = resolve_tfolder(sugar_directory);
+	if (!(folder instanceof TFolder)) {
+		vault.createFolder(sugar_directory);
 	}
 }
 

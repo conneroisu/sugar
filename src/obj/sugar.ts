@@ -12,9 +12,12 @@ import {
 	ensure_sugar_directory,
 	get_folder_path,
 	resolve_tfile,
+	resolve_tfolder,
 } from "./util";
 import {sep} from "path";
-export const menu_sep = "    ";
+
+export const menu_sep = "";
+
 /**
  * The main workhorse class for the sugar plugin.
  **/
@@ -38,7 +41,7 @@ export default class Sugar {
 		);
 	}
 
-	select_entry() {
+	async select_entry() {
 		// get the cursor position from obsidian editor
 		const markdownView = this.getActiveViewOfType();
 		if (markdownView) {
@@ -50,14 +53,38 @@ export default class Sugar {
 			// search the  table for the id found in the line
 
 			const path = this.table[id];
-			if (path) {
-				const file = resolve_tfile(path.toString());
-				this.app.workspace.getMostRecentLeaf()?.openFile(file, {
-					active: true,
-				});
-			} else {
-				console.log("Could not find entry with id: " + id);
+			if (!path && this.plugin.settings.debug) {
+				console.log("Could not find id: " + id);
 			}
+			const file = resolve_tfolder(path.toString());
+			// if the file is a TFolder open the directory in a sugar file
+			if (file instanceof TFolder) {
+				if (this.plugin.settings.debug) {
+					console.log(
+						"Sugar is Opening folder: " +
+						(await this.getParentForLatentSugarFile(
+							path.toString()
+						))
+					);
+				}
+
+				this.getLatentSugarFile(
+					await this.getParentForLatentSugarFile(path.toString())
+				).then((latent_file) => {
+					this.app.workspace
+						.getMostRecentLeaf()
+						?.openFile(latent_file, {active: true});
+				});
+				return;
+			}
+
+			if (this.plugin.settings.debug) {
+				console.log("Sugar is Opening file: " + file.path);
+			}
+
+			this.app.workspace.getMostRecentLeaf()?.openFile(file, {
+				active: true,
+			});
 		}
 	}
 
@@ -66,6 +93,9 @@ export default class Sugar {
 		const file_path = this.app.workspace.getActiveFile();
 		const leaf = this.app.workspace.getMostRecentLeaf();
 
+		if (this.plugin.settings.debug) {
+			console.log("Opening Sugar for: " + file_path?.path);
+		}
 		if (file_path) {
 			const latent_sugar_file = await this.getLatentSugarFile(
 				file_path.path
@@ -78,7 +108,7 @@ export default class Sugar {
 		}
 
 		if (this.plugin.settings.debug) {
-			console.log("Opened the Sugar File");
+			console.log("Opened the Sugar File for: " + file_path?.path);
 		}
 	}
 
@@ -103,6 +133,14 @@ export default class Sugar {
 		return latent_sugar_file;
 	}
 
+	/**
+	 *  gets the string of a path/parent-path of open sugar view from a latent sugar file
+	 **/
+	async getParentForLatentSugarFile(file_path: string): Promise<string> {
+		file_path = normalizePath(file_path);
+		const path: string = file_path.replace("^", sep);
+		return path.replace("∆", "").replace(".sugar", "") + sep;
+	}
 	async save_sugar(): Promise<void> {
 		// get the active workspace
 		const file = this.app.workspace.getActiveFile();
@@ -143,12 +181,13 @@ export default class Sugar {
 	 * Creates a list of all the files in a folder given a file path within the obsidian vault
 	 **/
 	async create_content_list(file_path: string): Promise<string> {
+		if (this.plugin.settings.debug) {
+			console.log("Creating content list for: " + file_path);
+		}
 		// remove the file name and extension from the end of the file path
 		let folder_path = file_path.substring(0, file_path.lastIndexOf(sep));
-		// if the file path is at the root of the vault(doesn't have any seps), set it to /
 		folder_path = get_folder_path(file_path);
 
-		// create a TFolder for the folder path
 		const files: TAbstractFile[] = [];
 		const files_paths: string[] = [];
 
