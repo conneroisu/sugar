@@ -6,10 +6,13 @@ import {Ninja} from "./settings/Ninja";
 
 import {CommandHandler} from "./command_handler";
 import Sugar from "./obj/sugar";
+import {sep} from "path";
+import SugarPostionMemory from "./obj/sugar_position_memory";
 
 export default class SugarPlugin extends Plugin {
 	public settings: SugarSettings;
 	public sugar: Sugar;
+	public sugar_position_memory: SugarPostionMemory;
 	public command_handler: CommandHandler;
 
 	async onload() {
@@ -22,6 +25,7 @@ export default class SugarPlugin extends Plugin {
 		}
 
 		this.sugar = new Sugar(this);
+		this.sugar_position_memory = new SugarPostionMemory(this);
 
 		this.registerExtensions(["sugar"], "markdown");
 

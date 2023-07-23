@@ -313,6 +313,7 @@ export default class Sugar {
 				const contents = await this.app.vault.cachedRead(res);
 				if (!(contents).contains(key)) {
 					this.app.vault.delete(value);
+					this.plugin.sugar_position_memory.deleteFile(value);
 				}
 			} else if (res != null && res instanceof TFolder) {
 				await this.removeFolderContents(res);
@@ -325,13 +326,13 @@ export default class Sugar {
 		for (const file of files) {
 			if (file.parent?.path === folder.path) {
 				await this.app.vault.delete(file);
+				this.plugin.sugar_position_memory.deleteFile(file);
 			}
 		}
 		// get all the folders
 		const subfolders = folder.children.filter((child): child is TFolder => child instanceof TFolder);
 		for (const subfolder of subfolders) {
 			if (subfolder.path.startsWith(folder.path)) {
-				await this.removeFolderContents(subfolder);
 				await this.app.vault.delete(subfolder);
 			}
 		}

@@ -1,5 +1,5 @@
-import type {EditorView} from "@codemirror/view";
-import {Plugin, SuggestModal, TFile, View, WorkspaceLeaf} from "obsidian";
+import type { EditorView } from "@codemirror/view";
+import { Plugin, SuggestModal, TFile, View, WorkspaceLeaf } from "obsidian";
 
 interface InternalPlugins {
 	switcher: QuickSwitcherPlugin;
@@ -16,15 +16,15 @@ interface InternalPlugin {
 	enable(): void;
 	enabled: boolean;
 	_loaded: boolean;
-	instance: {name: string; id: string};
+	instance: { name: string; id: string };
 }
 interface GraphPlugin extends InternalPlugin {
-	views: {localgraph: (leaf: WorkspaceLeaf) => GraphView};
+	views: { localgraph: (leaf: WorkspaceLeaf) => GraphView };
 }
 
 interface GraphView extends View {
 	engine: typeof Object;
-	renderer: {worker: {terminate(): void}};
+	renderer: { worker: { terminate(): void } };
 }
 interface QuickSwitcherPlugin extends InternalPlugin {
 	instance: {
@@ -62,7 +62,7 @@ declare module "obsidian" {
 			getPlugin(id: string): Plugin;
 			getPlugin(id: "calendar"): CalendarPlugin;
 		};
-		dom: {appContainerEl: HTMLElement};
+		dom: { appContainerEl: HTMLElement };
 		viewRegistry: ViewRegistry;
 		openWithDefaultApp(path: string): void;
 	}
@@ -88,7 +88,7 @@ declare module "obsidian" {
 		containerEl: HTMLElement;
 	}
 	interface MarkdownView {
-		editMode: {cm: EditorView};
+		editMode: { cm: EditorView };
 	}
 
 	interface MarkdownPreviewView {
@@ -186,6 +186,7 @@ declare module "obsidian" {
 		dom: HTMLElement;
 	}
 	interface EphemeralState {
+		cursor: any;
 		focus?: boolean;
 		subpath?: string;
 		line?: number;
