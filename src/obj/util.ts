@@ -1,4 +1,4 @@
-import { normalizePath, TAbstractFile, TFile, TFolder } from "obsidian";
+import {normalizePath, TAbstractFile, TFile, TFolder, Vault} from "obsidian";
 import * as path from "path";
 
 /**
@@ -17,38 +17,32 @@ export function resolve_tfile(file_str: string): TFile {
 	return file;
 }
 
-/**
- * Creates a list of all the files in a folder
- **/
-export function create_content_list(file_path: string): string {
-	file_path = normalizePath(file_path);
-	// remove the file name and extension from the end of the file path
-	let folder_path = file_path.substring(0, file_path.lastIndexOf(path.sep));
+export function get_folder_path(file_path: string): string {
 	// if the file path is at the root of the vault(doesn't have any seps), set it to /
-	if (folder_path.indexOf(path.sep) === -1) {
-		folder_path = path.sep;
+	if (file_path.indexOf(path.sep) === -1) {
+		file_path = path.sep;
 	} else {
 		//remove the last characters before the last sep
-		folder_path = file_path.substring(0, file_path.lastIndexOf(path.sep));
+		file_path = file_path.substring(0, file_path.lastIndexOf(path.sep));
 	}
+	return file_path;
+}
 
-	// create a TFolder fo rthe folder path
-	const files: string[] = [];
+export function ensure_sugar_directory(sugar_directory: string, vault: Vault) {
+	// Upon construction, sugar should ensure that the sugar directory exists
+	if (!this.app.vault.getAbstractFileByPath(sugar_directory)) {
+		this.app.vault.createFolder(sugar_directory);
+	}
+}
 
-	const folder: TFolder = this.app.vault.getAbstractFileByPath(
-		folder_path
-	) as TFolder;
-
-	folder.children.forEach((file) => {
-		if (file instanceof TAbstractFile) {
-			// if the file is a folder insert a / at the end and insert at the beginning of the files
-			if (file instanceof TFolder) {
-				files.unshift(file.path + path.sep);
-			} else {
-				files.push(file.path);
-			}
+export function deleteOldSugarFiles(
+	vault: Vault,
+	sugar_directory: string
+): void {
+	// Upon cosntuction, sugar should delete all sugar files inside of the sugar_directory
+	for (const file of vault.getFiles()) {
+		if (file.path.startsWith(sugar_directory)) {
+			vault.delete(file);
 		}
-	});
-
-	return files.join("\n");
+	}
 }

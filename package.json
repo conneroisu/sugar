@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-sample-plugin",
+	"name": "sugar-plugin",
 	"version": "1.0.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"description": "A plugin allowing for interactions with the file system in a note/buffer like the oil plugin for neovim.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",

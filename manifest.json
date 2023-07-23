@@ -1,6 +1,6 @@
 {
-	"id": "sugar-rock-plugin",
-	"name": "Sugar Rock Plugin",
+	"id": "sugar-plugin",
+	"name": "Sugar Plugin",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
 	"description": "A file explorer inside of Obsidian allowing for the editing the file system as if it were a note/buffer.",

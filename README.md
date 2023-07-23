@@ -14,6 +14,14 @@
     <li><a href="#acknowledgments">Acknowledgments</a></li>
 </ol></details>
 
+# Introduction
+
+The goals of this plugin are to provide full control over the file system within your vault using a note as an interaction surface. Notes created with this plugin are hidden from searches within your vault to allow for a faultless adoption.
+
+# Warning of Use
+
+This plugin uses a specially hidden directory and files so that the sugar can house and hide the files the user interacts with. Upon initialization, the files within the sugar directory are deleted to allow for new, updated versions of those files to be created. This plugin is not responsible for the side effects that may incur due to the adoption and use of it's self.
+
 # Details
 
 Wanting to use the leader key to trigger commands for the plugin? I recommend [tgrosinger's leader-hotkeys-obsidian](https://github.com/tgrosinger/leader-hotkeys-obsidian).
