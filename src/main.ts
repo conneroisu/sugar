@@ -1,3 +1,12 @@
+/*
+ * Filename: /Users/connerohnesorge/Documents/000Vaults/Sugar Development Vault/.obsidian/plugins/sugar/src/main.ts
+ * Path: /Users/connerohnesorge/Documents/000Vaults/Sugar Development Vault/.obsidian/plugins/sugar
+ * Created Date: Saturday, July 22nd 2023, 11:10:54 am
+ * Author: Conner Ohnesorge
+ * MIT License
+ * Copyright (c) 2023 Conner Ohnesorge
+ */
+
 import {Plugin} from "obsidian";
 
 import {DEFAULT_SETTINGS, SugarSettings} from "./settings/SugarSettings";
@@ -6,7 +15,6 @@ import {Ninja} from "./settings/Ninja";
 
 import {CommandHandler} from "./command_handler";
 import Sugar from "./obj/sugar";
-import {sep} from "path";
 import SugarPostionMemory from "./obj/sugar_position_memory";
 
 export default class SugarPlugin extends Plugin {
