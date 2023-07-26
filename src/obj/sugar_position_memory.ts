@@ -1,3 +1,12 @@
+/*
+ * Filename: /Users/connerohnesorge/Documents/000Vaults/Sugar Development Vault/.obsidian/plugins/sugar/src/obj/sugar_position_memory.ts
+ * Path: /Users/connerohnesorge/Documents/000Vaults/Sugar Development Vault/.obsidian/plugins/sugar
+ * Created Date: Saturday, July 22nd 2023, 11:41:56 pm
+ * Author: Conner Ohnesorge
+ * MIT License
+ * Copyright (c) 2023 Conner Ohnesorge
+ */
+
 import {
 	App,
 	MarkdownView,
@@ -83,20 +92,8 @@ export default class SugarPostionMemory {
 		);
 
 		this.plugin.registerEvent(
-			this.app.vault.on("rename", (file, oldPath) =>
-				this.renameFile(file, oldPath)
-			)
-		);
-
-		this.plugin.registerEvent(
 			this.app.vault.on("delete", (file) => this.deleteFile(file))
 		);
-	}
-	renameFile(file: TAbstractFile, oldPath: string) {
-		const newName = file.path;
-		const oldName = oldPath;
-		this.db[newName] = this.db[oldName];
-		delete this.db[oldName];
 	}
 
 	deleteFile(file: TAbstractFile) {
@@ -186,7 +183,8 @@ export default class SugarPostionMemory {
 	}
 
 	async restoreEphemeralState() {
-		const fileName = this.app.workspace.getActiveFile()?.path;
+		const file = this.app.workspace.getActiveFile();
+		const fileName = file?.path;
 
 		if (fileName && this.loadingFile && this.latestLoadedFile == fileName) {
 			return;
@@ -196,7 +194,10 @@ export default class SugarPostionMemory {
 
 		if (this.latestLoadedFile != fileName) {
 			this.lastEphemerialState = {};
-			if (fileName) {
+			if (
+				fileName &&
+				file.path.includes(this.plugin.settings.sugar_directory)
+			) {
 				this.latestLoadedFile = fileName;
 			}
 

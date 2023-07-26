@@ -1,3 +1,12 @@
+/*
+ * Filename: /Users/connerohnesorge/Documents/000Vaults/Sugar Development Vault/.obsidian/plugins/sugar/src/obj/sugar.ts
+ * Path: /Users/connerohnesorge/Documents/000Vaults/Sugar Development Vault/.obsidian/plugins/sugar
+ * Created Date: Saturday, July 15th 2023, 2:33:46 pm
+ * Author: Conner Ohnesorge
+ * MIT License
+ * Copyright (c) 2023 Conner Ohnesorge
+ */
+
 import SugarPlugin from "src/main";
 import {
 	App,

@@ -1,3 +1,12 @@
+/*
+ * Filename: /Users/connerohnesorge/Documents/000Vaults/Sugar Development Vault/.obsidian/plugins/sugar/src/settings/SugarSettingTab.ts
+ * Path: /Users/connerohnesorge/Documents/000Vaults/Sugar Development Vault/.obsidian/plugins/sugar
+ * Created Date: Saturday, July 22nd 2023, 11:10:54 am
+ * Author: Conner Ohnesorge
+ * MIT License
+ * Copyright (c) 2023 Conner Ohnesorge
+ */
+
 import {
 	ToggleComponent,
 	ButtonComponent,
@@ -5,9 +14,9 @@ import {
 	PluginSettingTab,
 	Setting,
 } from "obsidian";
-import {FolderSuggest} from "./folder_suggestion";
+import { FolderSuggest } from "./folder_suggestion";
 import SugarPlugin from "src/main";
-import {Ninja} from "./Ninja";
+import { Ninja } from "./Ninja";
 
 /**
  * This is a settings tab for the plugin, Sugar.
@@ -21,11 +30,11 @@ export class SugarSettingTab extends PluginSettingTab {
 	}
 
 	display(): void {
-		const {containerEl} = this;
+		const { containerEl } = this;
 
 		containerEl.empty();
 
-		containerEl.createEl("h2", {text: "Settings for the Sugar Plugin"});
+		containerEl.createEl("h2", { text: "Settings for the Sugar Plugin" });
 
 		/**
 		 * This is a settitng for the directory where .sugar files are stored and hidden for items inside of a directory

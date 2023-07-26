@@ -1,7 +1,16 @@
+/*
+ * Filename: /Users/connerohnesorge/Documents/000Vaults/Sugar Development Vault/.obsidian/plugins/sugar/src/settings/suggestion_handler.ts
+ * Path: /Users/connerohnesorge/Documents/000Vaults/Sugar Development Vault/.obsidian/plugins/sugar
+ * Created Date: Tuesday, July 11th 2023, 6:05:47 pm
+ * Author: Conner Ohnesorge
+ * MIT License
+ * Copyright (c) 2023 Conner Ohnesorge
+ */
+
 // Credits to Liam's Periodic Notes Plugin: https://github.com/liamcain/obsidian-periodic-notes
 
-import {ISuggestOwner, Scope} from "obsidian";
-import {createPopper, Instance as PopperInstance} from "@popperjs/core";
+import { ISuggestOwner, Scope } from "obsidian";
+import { createPopper, Instance as PopperInstance } from "@popperjs/core";
 
 const wrapAround = (value: number, size: number): number => {
 	return ((value % size) + size) % size;
@@ -169,7 +178,7 @@ export abstract class TextInputSuggest<T> implements ISuggestOwner<T> {
 				{
 					name: "sameWidth",
 					enabled: true,
-					fn: ({state, instance}) => {
+					fn: ({ state, instance }) => {
 						// Note: positioning needs to be calculated twice -
 						// first pass - positioning it according to the width of the popper
 						// second pass - position it with the width bound to the reference element

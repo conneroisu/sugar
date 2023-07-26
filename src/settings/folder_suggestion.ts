@@ -1,7 +1,16 @@
+/*
+ * Filename: /Users/connerohnesorge/Documents/000Vaults/Sugar Development Vault/.obsidian/plugins/sugar/src/settings/folder_suggestion.ts
+ * Path: /Users/connerohnesorge/Documents/000Vaults/Sugar Development Vault/.obsidian/plugins/sugar
+ * Created Date: Tuesday, July 11th 2023, 6:05:47 pm
+ * Author: Conner Ohnesorge
+ * MIT License
+ * Copyright (c) 2023 Conner Ohnesorge
+ */
+
 // Credits go to Liam's Periodic Notes Plugin: https://github.com/liamcain/obsidian-periodic-notes
 
-import {TAbstractFile, TFolder} from "obsidian";
-import {TextInputSuggest} from "./suggestion_handler";
+import { TAbstractFile, TFolder } from "obsidian";
+import { TextInputSuggest } from "./suggestion_handler";
 
 export class FolderSuggest extends TextInputSuggest<TFolder> {
 	getSuggestions(inputStr: string): TFolder[] {

@@ -1,3 +1,15 @@
+/*
+ * Filename: /Users/connerohnesorge/Documents/000Vaults/Sugar Development Vault/.obsidian/plugins/sugar/src/settings/SugarSettings.ts
+ * Path: /Users/connerohnesorge/Documents/000Vaults/Sugar Development Vault/.obsidian/plugins/sugar
+ * Created Date: Tuesday, July 11th 2023, 6:05:47 pm
+ * Author: Conner Ohnesorge
+ * MIT License 
+ * Copyright (c) 2023 Conner Ohnesorge
+ */
+
+
+
+
 /**
  * This is the interface for the settings of the plugin, Sugar.
  **/
