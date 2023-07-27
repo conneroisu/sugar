@@ -39,6 +39,7 @@ export default class Sugar {
 	sweetTable: Record<string, TAbstractFile> = {};
 
 	constructor(sugar_plugin: SugarPlugin) {
+		this.sweetTable = {};
 		this.plugin = sugar_plugin;
 		this.app = this.plugin.app;
 		this.debug = this.plugin.settings.debug;
@@ -225,10 +226,6 @@ export default class Sugar {
 	 * Creates a list of all the files in a folder given a file path within the obsidian vault
 	 **/
 	async create_content_list(file_path: string): Promise<string> {
-		if (this.debug) {
-			console.log("Sugar: Creating Content List for: " + file_path);
-		}
-
 		// remove the file name and extension from the end of the file path
 		let folder_path = file_path.substring(0, file_path.lastIndexOf(sep));
 		folder_path = get_folder_path(file_path);
@@ -384,7 +381,10 @@ export default class Sugar {
 					""
 				)
 			);
-			const content = await this.create_content_list(path);
+			if (path == null) {
+				return;
+			}
+			const content = await this.create_content_list(path.path);
 
 			if (this.debug) {
 				console.log("Sugar: Content for: " + path + " is: " + content);
@@ -393,6 +393,26 @@ export default class Sugar {
 				);
 			}
 			this.app.vault.append(file, content);
+		}
+	}
+
+	/**
+	 * Prints the contents of the sugar sweetTable
+	 * Additionally finishes by printing if there are duplicates
+	 **/
+	print_sweetTable(): void {
+		console.log("Printing Sweet Table");
+		console.log("=============================================");
+		const record: string[] = [];
+		for (const key in this.sweetTable) {
+			const value = this.sweetTable[key];
+			console.log(key + " : " + value.path);
+			record.push(value.path);
+			record.forEach((element) => {
+				if (record.indexOf(element) != record.lastIndexOf(element)) {
+					console.log("Duplicate: " + element);
+				}
+			});
 		}
 	}
 }

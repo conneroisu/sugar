@@ -15,9 +15,9 @@ import {
 	EphemeralState,
 } from "obsidian";
 import SugarPlugin from "src/main";
-import { CURSOR_DB_NAME, CURSOR_SAVE_INTERVAL } from "./constants";
-import { sep } from "path";
-import { CURSOR_OPEN_DELAY } from "./constants";
+import {CURSOR_DB_NAME, CURSOR_SAVE_INTERVAL} from "./constants";
+import {sep} from "path";
+import {CURSOR_OPEN_DELAY} from "./constants";
 
 interface EmpherialState {
 	cursor?: {
@@ -36,8 +36,8 @@ export default class SugarPostionMemory {
 	plugin: SugarPlugin;
 	debug: boolean;
 	app: App;
-	db: { [file_path: string]: EmpherialState };
-	lastSavedCursorPositionDB: { [file_path: string]: EmpherialState };
+	db: {[file_path: string]: EmpherialState};
+	lastSavedCursorPositionDB: {[file_path: string]: EmpherialState};
 	lastEphemerialState: EmpherialState;
 	latestLoadedFile: string;
 	loadingFile: boolean;
@@ -63,14 +63,14 @@ export default class SugarPostionMemory {
 			this.lastSavedCursorPositionDB = {};
 		}
 		this.plugin.registerInterval(
-			window.setInterval(() => this.checkEphemeralStateChanged(), 100)
+			window.setInterval(() => this.checkEphemeralStateChanged(), 10)
 		);
 
 		this.plugin.registerInterval(
 			window.setInterval(
 				() =>
 					this.writeDb(
-						this.db as { [file_path: string]: EphemeralState }
+						this.db as {[file_path: string]: EphemeralState}
 					),
 				CURSOR_SAVE_INTERVAL
 			)
@@ -86,7 +86,7 @@ export default class SugarPostionMemory {
 		this.plugin.registerEvent(
 			this.app.workspace.on("quit", () => {
 				return this.writeDb(
-					this.db as { [file_path: string]: EphemeralState }
+					this.db as {[file_path: string]: EphemeralState}
 				);
 			})
 		);
@@ -226,8 +226,8 @@ export default class SugarPostionMemory {
 		}
 	}
 
-	async readDb(): Promise<{ [file_path: string]: EphemeralState }> {
-		let db: { [file_path: string]: EphemeralState } = {};
+	async readDb(): Promise<{[file_path: string]: EphemeralState}> {
+		let db: {[file_path: string]: EphemeralState} = {};
 
 		if (await this.app.vault.adapter.exists(CURSOR_DB_NAME)) {
 			const data = await this.app.vault.adapter.read(CURSOR_DB_NAME);
@@ -237,7 +237,7 @@ export default class SugarPostionMemory {
 		return db;
 	}
 
-	async writeDb(db: { [file_path: string]: EphemeralState }) {
+	async writeDb(db: {[file_path: string]: EphemeralState}) {
 		//create folder for db file if not exist
 		const newParentFolder = CURSOR_DB_NAME.substring(
 			0,
