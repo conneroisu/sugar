@@ -26,6 +26,7 @@ import {
 import {sep} from "path";
 
 export const menu_sep = "";
+export const MAXIMUM_ID = 100000;
 
 /**
  * The main workhorse class for the sugar plugin.
@@ -271,7 +272,9 @@ export default class Sugar {
 	 **/
 	generate_id(): string {
 		while (this.mostTrueFunction()) {
-			const generated = Math.random().toString(36).substring(2, 15);
+			// generate a random numerical id of length 15
+			const generated = Math.floor((Math.random() * MAXIMUM_ID) + 1);
+
 			if (!this.sweetTable[generated]) {
 				return "<a href=" + generated + ">" + "</a>";
 			}
