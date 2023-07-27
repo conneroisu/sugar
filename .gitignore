@@ -5,6 +5,7 @@
 *.iml
 .idea
 
+cursor.db
 # npm
 node_modules
 

@@ -45,7 +45,7 @@ export default class SugarPlugin extends Plugin {
 		this.registerInterval(
 			window.setInterval(
 				() => Ninja.hidePath(this.settings.sugar_directory),
-				10
+				1000
 			)
 		);
 	}

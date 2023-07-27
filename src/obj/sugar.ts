@@ -23,7 +23,7 @@ import {
 	resolve_tfile,
 	resolve_tfolder,
 } from "./util";
-import { sep } from "path";
+import {sep} from "path";
 
 export const menu_sep = "";
 
@@ -52,35 +52,11 @@ export default class Sugar {
 		);
 	}
 
-	async reload_sugar(): Promise<void> {
-		// get the active workspace getMostRecentLeaf
-		const file = this.app.workspace.getActiveFile();
-
-		if (file) {
-			if (this.debug) {
-				console.log("Sugar: Reloading Sugar View for: " + file.path);
-			}
-			// modify the content of the current sugar file
-			this.app.vault.modify(
-				file,
-				""
-			);
-			const path = await this.getParentForLatentSugarFile(file.path.replace(this.plugin.settings.sugar_directory + sep, ""));
-			const content = await this.create_content_list(path);
-
-			if (this.debug) {
-				console.log("Sugar: Content for: " + path + " is: " + content);
-				console.log("Sugar: Content for: " + file.path + " is: " + content);
-			}
-			this.app.vault.append(file, content);
-		}
-	}
-
 	async select_entry() {
 		// get the cursor position from obsidian editor
 		const markdownView = this.getActiveViewOfType();
 		if (markdownView) {
-			const { editor } = markdownView;
+			const {editor} = markdownView;
 			const cursor = editor.getCursor();
 			const line = editor.getLine(cursor.line);
 			const line_text = line.slice(0, undefined);
@@ -106,7 +82,7 @@ export default class Sugar {
 				).then((latent_file) => {
 					this.app.workspace
 						.getMostRecentLeaf()
-						?.openFile(latent_file, { active: true });
+						?.openFile(latent_file, {active: true});
 				});
 				return;
 			}
@@ -126,26 +102,33 @@ export default class Sugar {
 
 	async open_sugar(): Promise<void> {
 		// get the active workspace leaf
-		const file_path = this.app.workspace.getActiveFile();
+		let active_file = this.app.workspace.getActiveFile();
 		const leaf = this.app.workspace.getMostRecentLeaf();
 
+		let res: null | TFolder | TFile = null;
 		if (this.debug) {
-			console.log("Sugar: Opening Sugar For: " + file_path?.path);
+			console.log("Sugar: Opening Sugar For: " + active_file?.path);
 		}
 
-		if (file_path) {
-			const latent_sugar_file = await this.getLatentSugarFile(
-				file_path.path
-			);
-			await leaf?.openFile(latent_sugar_file, { active: true });
-			this.files.push(latent_sugar_file);
-			this.contents.push(
-				await this.app.vault.cachedRead(latent_sugar_file)
-			);
-		}
-
-		if (this.debug) {
-			console.log("Sugar: Opened Path For: " + file_path?.path);
+		if (active_file != null) {
+			if (
+				this.is_sugar_file(active_file.path) &&
+				active_file.parent != null
+			) {
+				const vault_file = await this.GetVaultFile(
+					active_file.parent.path
+				);
+				if (vault_file != null) {
+					res = resolve_tfolder(vault_file.path);
+				}
+			}
+			if (!res) {
+				res = active_file;
+			}
+			active_file = await this.getLatentSugarFile(res.path);
+			await leaf?.openFile(active_file, {active: true});
+			this.files.push(active_file);
+			this.contents.push(await this.app.vault.cachedRead(active_file));
 		}
 	}
 
@@ -199,10 +182,11 @@ export default class Sugar {
 	/**
 	 *  gets the string of a path/parent-path of open sugar view from a latent sugar file
 	 **/
-	async getParentForLatentSugarFile(file_path: string): Promise<string> {
+	async GetVaultFile(file_path: string): Promise<TFile | TFolder | null> {
 		file_path = normalizePath(file_path);
-		const path: string = file_path.replace("^", sep);
-		return path.replace("∆", "").replace(".sugar", "");
+		let path: string = file_path.replace("^", sep);
+		path = path.replace(this.plugin.settings.sugar_directory + sep, "");
+		return resolve_tfolder(path.replace("∆", "").replace(".sugar", ""));
 	}
 
 	/**
@@ -289,14 +273,24 @@ export default class Sugar {
 	 * Generates a random id for a line in a sugar files.
 	 **/
 	generate_id(): string {
-		return (
-			"<a href=" +
-			Math.random().toString(5).substring(2, 7) +
-			">" +
-			"</a>"
-		);
+		while (this.mostTrueFunction()) {
+			const generated = Math.random().toString(36).substring(2, 15);
+			if (!this.sweetTable[generated]) {
+				return "<a href=" + generated + ">" + "</a>";
+			}
+			if (this.debug) {
+				console.log(
+					"Sugar: Generated ID But Was Matched within the table"
+				);
+			}
+		}
+		const generated = Math.random().toString(36).substring(2, 15);
+		return "<a href=" + generated + ">" + "</a>";
 	}
 
+	mostTrueFunction() {
+		return true;
+	}
 	/**
 	 * Returns the id of a line in a sugar file (within the a href).
 	 **/
@@ -320,7 +314,7 @@ export default class Sugar {
 			const res = resolve_tfolder(value.path);
 			if (res != null && res instanceof TFile) {
 				const contents = await this.app.vault.cachedRead(res);
-				if (!(contents).contains(key)) {
+				if (!contents.contains(key)) {
 					this.app.vault.delete(value);
 					this.plugin.sugar_position_memory.deleteFile(value);
 				}
@@ -339,7 +333,9 @@ export default class Sugar {
 			}
 		}
 		// get all the folders
-		const subfolders = folder.children.filter((child): child is TFolder => child instanceof TFolder);
+		const subfolders = folder.children.filter(
+			(child): child is TFolder => child instanceof TFolder
+		);
 		for (const subfolder of subfolders) {
 			if (subfolder.path.startsWith(folder.path)) {
 				await this.app.vault.delete(subfolder);
@@ -351,11 +347,52 @@ export default class Sugar {
 		const folders: TFolder[] = [];
 		const files = this.app.vault.getMarkdownFiles();
 		for (const file of files) {
-			const { parent } = file;
+			const {parent} = file;
 			if (parent instanceof TFolder && !folders.includes(parent)) {
 				folders.push(parent);
 			}
 		}
 		return folders;
+	}
+
+	/**
+	 * Method that determines if a file is with the sugar directory given a file path
+	 **/
+	is_sugar_file(file_path: string): boolean {
+		if (file_path.includes("sugar")) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Method that reloads the sugar view for the current sugar file
+	 **/
+	async reload_sugar(): Promise<void> {
+		// get the active workspace getMostRecentLeaf
+		const file = this.app.workspace.getActiveFile();
+
+		if (file) {
+			if (this.debug) {
+				console.log("Sugar: Reloading Sugar View for: " + file.path);
+			}
+			// modify the content of the current sugar file
+			this.app.vault.modify(file, "");
+			const path = await this.GetVaultFile(
+				file.path.replace(
+					this.plugin.settings.sugar_directory + sep,
+					""
+				)
+			);
+			const content = await this.create_content_list(path);
+
+			if (this.debug) {
+				console.log("Sugar: Content for: " + path + " is: " + content);
+				console.log(
+					"Sugar: Content for: " + file.path + " is: " + content
+				);
+			}
+			this.app.vault.append(file, content);
+		}
 	}
 }
