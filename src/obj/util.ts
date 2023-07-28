@@ -7,8 +7,9 @@
  * Copyright (c) 2023 Conner Ohnesorge
  */
 
-import { normalizePath, TFile, TFolder, Vault } from "obsidian";
+import { normalizePath, TAbstractFile, TFile, TFolder, Vault } from "obsidian";
 import * as path from "path";
+export const MAXIMUM_ID = 100000;
 
 /**
  * Gives a TFile for a given vault path
@@ -69,4 +70,27 @@ export function deleteOldSugarFiles(
 			vault.delete(file);
 		}
 	}
+}
+
+/**
+ * Generates a random id for a file.
+ **/
+export function generate_id(table: Record<string, TAbstractFile>): string {
+	while (mostTrueFunction()) {
+		// generate a random numerical id of length 15
+		const generated = Math.floor(Math.random() * MAXIMUM_ID + 1);
+
+		if (!this.table[generated]) {
+			return generated.toString();
+		}
+		if (this.debug) {
+			console.log("Sugar: Generated ID But Was Matched within the table");
+		}
+	}
+	const generated = Math.random().toString(36).substring(2, 15);
+	return "<a href=" + generated + ">" + "</a>";
+}
+
+function mostTrueFunction() {
+	return true;
 }

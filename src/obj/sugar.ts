@@ -19,6 +19,7 @@ import {
 import {
 	deleteOldSugarFiles,
 	ensure_sugar_directory,
+	generate_id,
 	get_folder_path,
 	resolve_tfile,
 	resolve_tfolder,
@@ -176,7 +177,7 @@ export default class Sugar {
 				latent_sugar_file.path
 			);
 		}
-		this.sweetTable[this.generate_sweet_id()] = latent_sugar_file;
+		this.sweetTable[generate_id(this.sweetTable)] = latent_sugar_file;
 		if (this.debug) {
 			console.log(
 				"Sugar: Added Latent Sugar File to Sweet Table. It is: " +
@@ -212,8 +213,12 @@ export default class Sugar {
 	async parseSugarContent(file: TFile) {
 		this.parse_delete();
 		this.parse_move();
+		this.parse_copy();
 		this.parse_create();
 		this.parse_rename();
+	}
+	parse_copy() {
+		throw new Error("Method not implemented.");
 	}
 	/** 
 	 * Parses the sugar file for moving of files by using the sweet Table 
@@ -255,7 +260,7 @@ export default class Sugar {
 					// if the file is a folder insert a / at the end and insert at the beginning of the files
 					files_paths.push();
 					if (file instanceof TFolder) {
-						const generated_id = this.generate_id();
+						const generated_id = generate_id(this.fTable);
 						const res = resolve_tfolder(file.path);
 						if (res != null && res instanceof TFolder) {
 							this.fTable[this.parse_id(generated_id)] = res;
@@ -265,7 +270,7 @@ export default class Sugar {
 						);
 						files.unshift(file);
 					} else {
-						const generated_id = this.generate_id();
+						const generated_id = generate_id(this.fTable);
 						this.fTable[this.parse_id(generated_id)] = file;
 						files_paths.push(
 							"∆" + generated_id + menu_sep + file.name
@@ -278,51 +283,7 @@ export default class Sugar {
 		return files_paths.join("\n");
 	}
 
-	/**
-	 * Generates a random id for a line in a sugar files.
-	 **/
-	generate_id(): string {
-		while (this.mostTrueFunction()) {
-			// generate a random numerical id of length 15
-			const generated = Math.floor((Math.random() * MAXIMUM_ID) + 1);
 
-			if (!this.fTable[generated]) {
-				return "<a href=" + generated + ">" + "</a>";
-			}
-			if (this.debug) {
-				console.log(
-					"Sugar: Generated ID But Was Matched within the table"
-				);
-			}
-		}
-		const generated = Math.random().toString(36).substring(2, 15);
-		return "<a href=" + generated + ">" + "</a>";
-	}
-
-	/**
-	 * Generates a random id for a line in a sugar files.
-	 **/
-	generate_sweet_id(): string {
-		while (this.mostTrueFunction()) {
-			// generate a random numerical id of length 15
-			const generated = Math.floor((Math.random() * MAXIMUM_ID) + 1);
-
-			if (!this.sweetTable[generated]) {
-				return generated.toString();
-			}
-			if (this.debug) {
-				console.log(
-					"Sugar: Generated ID But Was Matched within the table"
-				);
-			}
-		}
-		const generated = Math.random().toString(36).substring(2, 15);
-		return "<a href=" + generated + ">" + "</a>";
-	}
-
-	mostTrueFunction() {
-		return true;
-	}
 	/**
 	 * Returns the id of a line in a sugar file (within the a href).
 	 **/
