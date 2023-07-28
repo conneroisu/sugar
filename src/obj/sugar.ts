@@ -37,10 +37,11 @@ export default class Sugar {
 	app: App;
 	files: TFile[] = [];
 	contents: string[] = [];
+	fTable: Record<string, TAbstractFile> = {};
 	sweetTable: Record<string, TAbstractFile> = {};
 
 	constructor(sugar_plugin: SugarPlugin) {
-		this.sweetTable = {};
+		this.fTable = {};
 		this.plugin = sugar_plugin;
 		this.app = this.plugin.app;
 		this.debug = this.plugin.settings.debug;
@@ -68,19 +69,19 @@ export default class Sugar {
 			if (this.debug) {
 				console.log("Sugar: Selecting Entry with ID: " + id);
 			}
-			if (!this.sweetTable[id] && this.debug) {
+			if (!this.fTable[id] && this.debug) {
 				console.log("Sugar: Failed Find ID: " + id);
 			}
 
 			// if the file is a TFolder open the directory in a sugar file
-			if (this.sweetTable[id] instanceof TFolder) {
+			if (this.fTable[id] instanceof TFolder) {
 				if (this.debug) {
 					console.log(
-						"Sugar: Opening Folder: " + this.sweetTable[id].path
+						"Sugar: Opening Folder: " + this.fTable[id].path
 					);
 				}
 				this.getLatentSugarFile(
-					this.sweetTable[id].path + sep + "sug"
+					this.fTable[id].path + sep + "sug"
 				).then((latent_file) => {
 					this.app.workspace
 						.getMostRecentLeaf()
@@ -90,12 +91,12 @@ export default class Sugar {
 			}
 
 			if (this.debug) {
-				console.log("Sugar Opening File: " + this.sweetTable[id].path);
+				console.log("Sugar Opening File: " + this.fTable[id].path);
 			}
 
 			this.app.workspace
 				.getMostRecentLeaf()
-				?.openFile(this.sweetTable[id] as TFile),
+				?.openFile(this.fTable[id] as TFile),
 			{
 				active: true,
 			};
@@ -151,13 +152,10 @@ export default class Sugar {
 		}
 		let latent_sugar_file: TFile;
 
-		const latent_sugar_file_path =
-			this.plugin.settings.sugar_directory + sep + "∆" + path + ".sugar";
+		const latent_sugar_file_path = this.plugin.settings.sugar_directory + sep + "∆" + path + ".sugar";
 
 		try {
-			if (this.debug) {
-				console.log("Sugar: Attemping Creation Latent Sugar File");
-			}
+			if (this.debug) {console.log("Sugar: Attemping Creation Latent Sugar File");}
 
 			latent_sugar_file = await this.app.vault.create(
 				latent_sugar_file_path,
@@ -175,6 +173,13 @@ export default class Sugar {
 				"Sugar: Got Latent Sugar File for: " +
 				file_path +
 				". It is: " +
+				latent_sugar_file.path
+			);
+		}
+		this.sweetTable[this.generate_sweet_id()] = latent_sugar_file;
+		if (this.debug) {
+			console.log(
+				"Sugar: Added Latent Sugar File to Sweet Table. It is: " +
 				latent_sugar_file.path
 			);
 		}
@@ -205,22 +210,28 @@ export default class Sugar {
 	 * Reads the sugar file and determines actions that should be taken based on the content
 	 **/
 	async parseSugarContent(file: TFile) {
-		// get the old content of the file by finding the index of the file in the files array
-		const old_content = this.contents[this.files.indexOf(file)];
-		// get the new content of the file
-		const new_content = await this.app.vault.cachedRead(file);
-		const new_content_lines = new_content.split("\n");
-		const old_content_lines = old_content.split("\n");
-		if (new_content_lines.length > old_content_lines.length) {
-			// get the file without an id
-			const new_file = new_content_lines.filter((line) => {
-				// without beginning wiht an id
-				return !line.startsWith("∆");
-			})[0];
-			// create the file
-			this.app.vault.create(new_file, "");
-		}
 		this.parse_delete();
+		this.parse_move();
+		this.parse_create();
+		this.parse_rename();
+	}
+	/** 
+	 * Parses the sugar file for moving of files by using the sweet Table 
+	 **/
+	parse_move() {
+		throw new Error("Method not implemented.");
+	}
+	/**
+	 * Parses the sugar file for creation of files by using the sweet Table
+	 **/
+	parse_create() {
+		throw new Error("Method not implemented.");
+	}
+	/** 
+	 * Parses the sugar file for renaming of files by using the sweet Table
+	 **/
+	parse_rename() {
+		throw new Error("Method not implemented.");
 	}
 
 	/**
@@ -247,7 +258,7 @@ export default class Sugar {
 						const generated_id = this.generate_id();
 						const res = resolve_tfolder(file.path);
 						if (res != null && res instanceof TFolder) {
-							this.sweetTable[this.parse_id(generated_id)] = res;
+							this.fTable[this.parse_id(generated_id)] = res;
 						}
 						files_paths.unshift(
 							"∆" + generated_id + menu_sep + file.path + sep
@@ -255,7 +266,7 @@ export default class Sugar {
 						files.unshift(file);
 					} else {
 						const generated_id = this.generate_id();
-						this.sweetTable[this.parse_id(generated_id)] = file;
+						this.fTable[this.parse_id(generated_id)] = file;
 						files_paths.push(
 							"∆" + generated_id + menu_sep + file.name
 						);
@@ -275,8 +286,29 @@ export default class Sugar {
 			// generate a random numerical id of length 15
 			const generated = Math.floor((Math.random() * MAXIMUM_ID) + 1);
 
-			if (!this.sweetTable[generated]) {
+			if (!this.fTable[generated]) {
 				return "<a href=" + generated + ">" + "</a>";
+			}
+			if (this.debug) {
+				console.log(
+					"Sugar: Generated ID But Was Matched within the table"
+				);
+			}
+		}
+		const generated = Math.random().toString(36).substring(2, 15);
+		return "<a href=" + generated + ">" + "</a>";
+	}
+
+	/**
+	 * Generates a random id for a line in a sugar files.
+	 **/
+	generate_sweet_id(): string {
+		while (this.mostTrueFunction()) {
+			// generate a random numerical id of length 15
+			const generated = Math.floor((Math.random() * MAXIMUM_ID) + 1);
+
+			if (!this.sweetTable[generated]) {
+				return generated.toString();
 			}
 			if (this.debug) {
 				console.log(
@@ -309,8 +341,8 @@ export default class Sugar {
 	 * Parses the sugar file to determine if any files have been deleted and deletes them
 	 **/
 	async parse_delete(): Promise<void> {
-		for (const key in this.sweetTable) {
-			const value = this.sweetTable[key];
+		for (const key in this.fTable) {
+			const value = this.fTable[key];
 			const res = resolve_tfolder(value.path);
 			if (res != null && res instanceof TFile) {
 				const contents = await this.app.vault.cachedRead(res);
@@ -400,14 +432,34 @@ export default class Sugar {
 	}
 
 	/**
-	 * Prints the contents of the sugar sweetTable
+	 * 
+	 * Prints the contents of the sugar fTable
+	 * Additionally finishes by printing if there are duplicates
+	 **/
+	print_fTable(): void {
+		console.log("Printing F Table");
+		console.log("=============================================");
+		const record: string[] = [];
+		for (const key in this.fTable) {
+			const value = this.fTable[key];
+			console.log(key + " : " + value.path);
+			record.push(value.path);
+			record.forEach((element) => {
+				if (record.indexOf(element) != record.lastIndexOf(element)) {
+					console.log("Duplicate: " + element);
+				}
+			});
+		}
+	}
+	/**
+	 * Prints the contents of the sugar fTable
 	 * Additionally finishes by printing if there are duplicates
 	 **/
 	print_sweetTable(): void {
 		console.log("Printing Sweet Table");
 		console.log("=============================================");
 		const record: string[] = [];
-		for (const key in this.sweetTable) {
+		for (const key in this.fTable) {
 			const value = this.sweetTable[key];
 			console.log(key + " : " + value.path);
 			record.push(value.path);

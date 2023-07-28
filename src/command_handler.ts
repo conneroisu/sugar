@@ -93,6 +93,14 @@ export class CommandHandler {
 		});
 
 		this.plugin.addCommand({
+			id: "print_fTable",
+			name: "Print FTable Table",
+			callback: () => {
+				this.plugin.sugar.print_fTable();
+			},
+		});
+
+		this.plugin.addCommand({
 			id: "print_sweetTable",
 			name: "Print Sweet Table",
 			callback: () => {
