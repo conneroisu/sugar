@@ -45,6 +45,9 @@ export default class Sugar {
 	sweetTable: Record<string, TAbstractFile> = {};
 	actions: Action[] = [];
 
+	/**
+	 * The constuctor for the main workhorse class for the sugar plugin.
+	 **/
 	constructor(sugar_plugin: SugarPlugin) {
 		this.fTable = {};
 		this.plugin = sugar_plugin;
@@ -105,9 +108,6 @@ export default class Sugar {
 		}
 	}
 
-	/**
-	 * Gets the latent sugar file for a given file path
-	 **/
 	async getLatentSugarFile(file_path: string): Promise<TFile> {
 		file_path = normalizePath(file_path);
 		const path: string = file_path.replace(sep, "^");
@@ -150,7 +150,9 @@ export default class Sugar {
 	 **/
 	async save_sugar(): Promise<void> {
 		const file = this.app.workspace.getActiveFile();
-		if (file) {this.parseSugarContent(file);}
+		if (file) {
+			this.parseSugarContent(file);
+		}
 	}
 
 	/**
