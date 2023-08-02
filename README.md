@@ -20,7 +20,7 @@ The goals of this plugin are to provide full control over the file system within
 
 # Warning of Use
 
-This plugin uses a specially hidden directory and files so that the sugar can house and hide the files the user interacts with. Upon initialization, the files within the sugar directory are deleted to allow for new, updated versions of those files to be created. This plugin is not responsible for the side effects that may incur due to the adoption and use of it's self.
+This plugin uses a specially toggleable hidden directory and files so that the sugar can house and hide the files the user interacts with. Upon initialization, the files within the sugar directory are deleted to allow for new, updated versions of those files to be created. This plugin is not responsible for the side effects that may incur due to the adoption and use of it's self.
 
 # Details
 
