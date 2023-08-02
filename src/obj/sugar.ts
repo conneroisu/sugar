@@ -251,28 +251,6 @@ export default class Sugar {
 		return files_paths.join("\n");
 	}
 
-	/**
-	 * Generates a random id for a line in a sugar files.
-	 **/
-	generate_id(): string {
-		while (this.mostTrueFunction()) {
-			// generate a random numerical id of length 15
-			const generated = Math.floor(Math.random() * MAXIMUM_ID + 1);
-
-			if (!this.fTable[generated]) {
-				return "<a href=" + generated + ">" + "</a>";
-			}
-		}
-		const generated = Math.random().toString(36).substring(2, 15);
-		return "<a href=" + generated + ">" + "</a>";
-	}
-
-	mostTrueFunction() {
-		return true;
-	}
-	/**
-	 * Returns the active view of the workspace if it is a markdown view.
-	 **/
 	public getActiveViewOfType() {
 		return this.app.workspace.getActiveViewOfType(MarkdownView);
 	}
