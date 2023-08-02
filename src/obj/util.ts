@@ -7,7 +7,7 @@
  * Copyright (c) 2023 Conner Ohnesorge
  */
 
-import { normalizePath, TAbstractFile, TFile, TFolder, Vault } from "obsidian";
+import {normalizePath, TAbstractFile, TFile, TFolder, Vault} from "obsidian";
 import * as path from "path";
 export const MAXIMUM_ID = 100000;
 
@@ -78,19 +78,37 @@ export function deleteOldSugarFiles(
 export function generate_id(table: Record<string, TAbstractFile>): string {
 	while (mostTrueFunction()) {
 		// generate a random numerical id of length 15
-		const generated = Math.floor(Math.random() * MAXIMUM_ID + 1);
+		const generated = Math.floor(Math.random() * MAXIMUM_ID + 1).toString();
 
-		if (!this.table[generated]) {
-			return generated.toString();
+		let res: TAbstractFile | null = null;
+		try {
+			res = this.table[generated];
+		} catch (e) {
+			return "<a href=" + generated.toString() + ">" + "</a>";
 		}
-		if (this.debug) {
-			console.log("Sugar: Generated ID But Was Matched within the table");
+		if (!res) {
+			return "<a href=" + generated.toString() + ">" + "</a>";
 		}
 	}
 	const generated = Math.random().toString(36).substring(2, 15);
-	return "<a href=" + generated + ">" + "</a>";
+	return "<a href=" + generated.toString() + ">" + "</a>";
 }
 
 function mostTrueFunction() {
 	return true;
+}
+/**
+ * Method that determines if a file is with the sugar directory given a file path
+ **/
+export function is_sugar_file(file_path: string): boolean {
+	if (file_path.includes("sugar")) {
+		return true;
+	}
+	return false;
+}
+/**
+ * Returns the id of a line in a sugar file (within the a href).
+ **/
+export function parse_id(line: string): string {
+	return line.split("<a href=")[1].split(">")[0];
 }

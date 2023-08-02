@@ -46,7 +46,7 @@ From [oil](https://github.com/stevearc/oil.nvim)&[vinegar ](https://github.com/t
 Split windows and the project drawer go together like oil and vinegar. I don't mean to say that you can combine them to create a delicious salad dressing. I mean that they don't mix well!
 
 Drew Neil
-Vinegar was [[taken]](https://github.com/tpope/vim-vinegar). So was oil. However neither are as needed in a recipe as sugar. Plus, I think it's pretty sweet ;)
+Vinegar was [[taken]](https://github.com/tpope/vim-vinegar). So was oil. However neither are as needed in a good recipe as sugar. Plus, I think it's pretty sweet ;)
 
 # Acknowledgements
 

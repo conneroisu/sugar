@@ -92,21 +92,6 @@ export class CommandHandler {
 			},
 		});
 
-		this.plugin.addCommand({
-			id: "print_fTable",
-			name: "Print FTable Table",
-			callback: () => {
-				this.plugin.sugar.print_fTable();
-			},
-		});
-
-		this.plugin.addCommand({
-			id: "print_sweetTable",
-			name: "Print Sweet Table",
-			callback: () => {
-				this.plugin.sugar.print_sweetTable();
-			},
-		});
 		// TODO: Add this command to allow for the insertion of a character into the sugar view
 		// this.plugin.addCommand({
 		// 	id: "insert-sugar-template-character",
