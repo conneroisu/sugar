@@ -32,6 +32,13 @@ export class CommandHandler {
 		}
 
 		this.plugin.addCommand({
+			id: "open-sugar-op",
+			name: "Sugar Operation Open",
+			callback: () => {
+				this.plugin.openMapView();
+			},
+		});
+		this.plugin.addCommand({
 			id: "open-sugar-view",
 			name: "Sugar View Open",
 			callback: () => {

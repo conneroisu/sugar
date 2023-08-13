@@ -1,18 +1,17 @@
 {
+	"extends": "@tsconfig/svelte/tsconfig.json",
 	"compilerOptions": {
-		"baseUrl": ".",
-		"inlineSourceMap": true,
+		"baseUrl": "main.ts",
+		"types": ["svelte", "node"],
 		"inlineSources": true,
 		"module": "ESNext",
 		"target": "ES6",
 		"allowJs": true,
 		"noImplicitAny": true,
 		"moduleResolution": "node",
-		"jsx": "react",
 		"importHelpers": true,
-		"isolatedModules": true,
 		"strictNullChecks": true,
 		"lib": ["DOM", "ES5", "ES6", "ES7"]
 	},
-	"include": ["**/*.ts"]
+	"include": ["**/globals.d.ts", "**/*.js", "**/*.svelte", "**/*.ts"]
 }

@@ -7,17 +7,19 @@
  * Copyright (c) 2023 Conner Ohnesorge
  */
 
-import {Plugin} from "obsidian";
+import { Plugin } from "obsidian";
 
-import {DEFAULT_SETTINGS, SugarSettings} from "./settings/SugarSettings";
-import {SugarSettingTab} from "./settings/SugarSettingTab";
-import {Ninja} from "./settings/Ninja";
+import { DEFAULT_SETTINGS, SugarSettings } from "./settings/SugarSettings";
+import { SugarSettingTab } from "./settings/SugarSettingTab";
+import { Ninja } from "./settings/Ninja";
 
-import {CommandHandler} from "./command_handler";
+import { CommandHandler } from "./command_handler";
 import Sugar from "./obj/sugar";
 import SugarPostionMemory from "./obj/sugar_position_memory";
+import { VIEW_TYPE, SugarOperationView } from "./obj/ui/view";
 
 export default class SugarPlugin extends Plugin {
+	private view: SugarOperationView;
 	public settings: SugarSettings;
 	public sugar: Sugar;
 	public sugar_position_memory: SugarPostionMemory;
@@ -62,5 +64,13 @@ export default class SugarPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
+	}
+
+	async openMapView() {
+		const workspace = this.app.workspace;
+		workspace.detachLeavesOfType(VIEW_TYPE);
+		const leaf = workspace.getLeaf();
+		await leaf.setViewState({ type: VIEW_TYPE });
+		workspace.revealLeaf(leaf);
 	}
 }

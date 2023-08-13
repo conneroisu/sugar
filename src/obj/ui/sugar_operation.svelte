@@ -1,12 +1,8 @@
-<script>
-	/*
-	 * Filename: /Users/connerohnesorge/Documents/000Vaults/Sugar Development Vault/.obsidian/plugins/sugar/src/obj/sugar_operation.svelte
-	 * Path: /Users/connerohnesorge/Documents/000Vaults/Sugar Development Vault/.obsidian/plugins/sugar
-	 * Created Date: Sunday, July 23rd 2023, 9:37:36 pm
-	 * Author: Conner Ohnesorge
-	 * MIT License
-	 * Copyright (c) 2023 Conner Ohnesorge
-	 */
+<script lang="ts">
+	import type SugarPlugin from "src/main";
+
+	let plugin: SugarPlugin;
+	store.plugin.subscribe((p) => (plugin = p));
 
 	let columns = ["Operation", "Details"];
 	let data = [

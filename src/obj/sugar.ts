@@ -7,7 +7,7 @@
  * Copyright (c) 2023 Conner Ohnesorge
  */
 
-import SugarPlugin from "src/main";
+import SugarPlugin from "../main";
 import {
 	App,
 	MarkdownView,
@@ -26,8 +26,8 @@ import {
 	parse_id,
 	generate_id,
 } from "./util";
-import {sep} from "path";
-import {Action} from "./action";
+import { sep } from "path";
+import { Action } from "./action";
 
 export const menu_sep = "";
 export const MAXIMUM_ID = 100000;
@@ -62,7 +62,7 @@ export default class Sugar {
 		if (!markdownView) {
 			return;
 		}
-		const {editor} = markdownView;
+		const { editor } = markdownView;
 		const cursor = editor.getCursor();
 		const line = editor.getLine(cursor.line);
 		const line_text = line.slice(0, undefined);
@@ -74,12 +74,12 @@ export default class Sugar {
 			);
 			this.app.workspace
 				.getMostRecentLeaf()
-				?.openFile(lat, {active: true});
+				?.openFile(lat, { active: true });
 			return;
 		}
 		this.app.workspace
 			.getMostRecentLeaf()
-			?.openFile(this.fTable[id] as TFile, {active: true});
+			?.openFile(this.fTable[id] as TFile, { active: true });
 	}
 
 	async open_sugar(): Promise<void> {
@@ -102,7 +102,7 @@ export default class Sugar {
 				res = active_file;
 			}
 			active_file = await this.getLatentSugarFile(res.path);
-			await leaf?.openFile(active_file, {active: true});
+			await leaf?.openFile(active_file, { active: true });
 			this.files.push(active_file);
 			this.contents.push(await this.app.vault.cachedRead(active_file));
 		}
@@ -279,7 +279,7 @@ export default class Sugar {
 		const folders: TFolder[] = [];
 		const files = this.app.vault.getMarkdownFiles();
 		for (const file of files) {
-			const {parent} = file;
+			const { parent } = file;
 			if (parent instanceof TFolder && !folders.includes(parent)) {
 				folders.push(parent);
 			}
