@@ -132,7 +132,6 @@ export default class Sugar {
 		}
 
 		this.sweetTable[generate_id(this.sweetTable)] = latent_sugar_file;
-
 		return latent_sugar_file;
 	}
 

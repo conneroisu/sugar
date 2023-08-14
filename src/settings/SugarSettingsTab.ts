@@ -14,9 +14,9 @@ import {
 	PluginSettingTab,
 	Setting,
 } from "obsidian";
-import { FolderSuggest } from "./folder_suggestion";
+import {FolderSuggest} from "./folder_suggestion";
 import SugarPlugin from "../main";
-import { Ninja } from "./Ninja";
+import {Ninja} from "./Ninja";
 import path from "path";
 
 /**
@@ -31,11 +31,11 @@ export class SugarSettingTab extends PluginSettingTab {
 	}
 
 	display(): void {
-		const { containerEl } = this;
+		const {containerEl} = this;
 
 		containerEl.empty();
 
-		containerEl.createEl("h2", { text: "Settings for the Sugar Plugin" });
+		containerEl.createEl("h2", {text: "Settings for the Sugar Plugin"});
 
 		// get the vault name by getting the last element of the absolute path of the vault
 		const basePath = (this.app.vault.adapter as any).basePath;
@@ -49,10 +49,10 @@ export class SugarSettingTab extends PluginSettingTab {
 
 			.setDesc(
 				"Directory name to hide the sugar files inside of. Additionally, the folder will be hidden from the file explorer inside Obsidian depending on the following setting. (Default: 'sugar', meaning that the sugar view files will be generated in " +
-					vaultName +
-					path.sep +
-					"sugar" +
-					")"
+				vaultName +
+				path.sep +
+				"sugar" +
+				")"
 			)
 			.addSearch((cb) => {
 				new FolderSuggest(cb.inputEl);
@@ -60,7 +60,7 @@ export class SugarSettingTab extends PluginSettingTab {
 					.setValue(this.plugin.settings.sugar_directory)
 					.onChange((new_folder) => {
 						Ninja.unhidePath(this.plugin.settings.sugar_directory);
-						Ninja.unhidePath(new_folder);
+						this.plugin.ninja.unhidePath(new_folder);
 						this.plugin.settings.sugar_directory = new_folder;
 						this.plugin.saveSettings();
 					});
