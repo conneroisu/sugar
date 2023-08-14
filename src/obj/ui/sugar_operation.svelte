@@ -1,10 +1,4 @@
 <script lang="ts">
-	import { Console } from "console";
-	import { AbstractTextComponent, Modal } from "obsidian";
-	import store from "./store";
-	import Sugar from "../sugar";
-	import SugarPlugin from "../../main";
-
 	let columns = ["Type", "Details"];
 	let data = [
 		["CREATE", "john@example.com"],
@@ -14,8 +8,6 @@
 		["MOVE", "old_dir/file_name.md → new_dir/new_file_name.md"],
 	];
 	let newRow = [...columns];
-
-	this.currentClass = "CRATE";
 
 	function getClass(cell: string): string {
 		if (cell.toUpperCase() === "CREATE") {

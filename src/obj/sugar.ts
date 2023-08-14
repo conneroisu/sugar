@@ -18,7 +18,7 @@ import {
 } from "obsidian";
 import {
 	deleteOldSugarFiles as deleteOldSFiles,
-	is_sugar_file,
+	isSugarFile,
 	ensure_sugar_directory as ensureSDir,
 	get_folder_path,
 	resolve_tfile,
@@ -26,9 +26,9 @@ import {
 	parse_id,
 	generate_id,
 } from "./util";
-import { sep } from "path";
-import { Action } from "./action";
-import { SugarOperationView } from "./ui/view";
+import {sep} from "path";
+import {Action} from "./action";
+import {SugarOperationView} from "./ui/view";
 
 export const menu_sep = "";
 export const MAXIMUM_ID = 100000;
@@ -63,7 +63,7 @@ export default class Sugar {
 		if (!markdownView) {
 			return;
 		}
-		const { editor } = markdownView;
+		const {editor} = markdownView;
 		const cursor = editor.getCursor();
 		const line = editor.getLine(cursor.line);
 		const line_text = line.slice(0, undefined);
@@ -75,12 +75,12 @@ export default class Sugar {
 			);
 			this.app.workspace
 				.getMostRecentLeaf()
-				?.openFile(lat, { active: true });
+				?.openFile(lat, {active: true});
 			return;
 		}
 		this.app.workspace
 			.getMostRecentLeaf()
-			?.openFile(this.fTable[id] as TFile, { active: true });
+			?.openFile(this.fTable[id] as TFile, {active: true});
 	}
 
 	async open_sugar(): Promise<void> {
@@ -91,7 +91,7 @@ export default class Sugar {
 		let res: null | TFolder | TFile = null;
 
 		if (active_file != null) {
-			if (is_sugar_file(active_file.path) && active_file.parent != null) {
+			if (isSugarFile(active_file.path) && active_file.parent != null) {
 				const vault_file = await this.GetVaultFile(
 					active_file.parent.path
 				);
@@ -103,7 +103,7 @@ export default class Sugar {
 				res = active_file;
 			}
 			active_file = await this.getLatentSugarFile(res.path);
-			await leaf?.openFile(active_file, { active: true });
+			await leaf?.openFile(active_file, {active: true});
 			this.files.push(active_file);
 			this.contents.push(await this.app.vault.cachedRead(active_file));
 		}
@@ -287,7 +287,7 @@ export default class Sugar {
 		const folders: TFolder[] = [];
 		const files = this.app.vault.getMarkdownFiles();
 		for (const file of files) {
-			const { parent } = file;
+			const {parent} = file;
 			if (parent instanceof TFolder && !folders.includes(parent)) {
 				folders.push(parent);
 			}

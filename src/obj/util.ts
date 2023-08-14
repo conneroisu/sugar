@@ -55,6 +55,7 @@ export function get_folder_path(file_path: string): string {
 export function ensure_sugar_directory(sugar_directory: string, vault: Vault) {
 	// Upon construction, sugar should ensure that the sugar directory exists
 	const folder = resolve_tfolder(sugar_directory);
+
 	if (!(folder instanceof TFolder)) {
 		vault.createFolder(sugar_directory);
 	}
@@ -100,7 +101,7 @@ function mostTrueFunction() {
 /**
  * Method that determines if a file is with the sugar directory given a file path
  **/
-export function is_sugar_file(file_path: string): boolean {
+export function isSugarFile(file_path: string): boolean {
 	if (file_path.includes("sugar")) {
 		return true;
 	}
