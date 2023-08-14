@@ -31,13 +31,7 @@ export class CommandHandler {
 			console.log("Setup Method of Command Handler is running.");
 		}
 
-		this.plugin.addCommand({
-			id: "open-sugar-op",
-			name: "Sugar Operation Open",
-			callback: () => {
-				this.plugin.openMapView();
-			},
-		});
+	
 		this.plugin.addCommand({
 			id: "open-sugar-view",
 			name: "Sugar View Open",
@@ -47,7 +41,7 @@ export class CommandHandler {
 		});
 		this.plugin.addCommand({
 			id: "save-sugar-view",
-			name: "Sugar View Saved",
+			name: "Save Sugar View",
 			checkCallback: (checking: boolean) => {
 				const currentFile = this.plugin.app.workspace.getActiveFile();
 				if (

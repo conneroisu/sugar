@@ -27,6 +27,11 @@ This plugin uses a specially toggleable hidden directory and files so that the s
 Wanting to use the leader key to trigger commands for the plugin? I recommend [tgrosinger's leader-hotkeys-obsidian](https://github.com/tgrosinger/leader-hotkeys-obsidian).
 Wanting to use `g<C-a>`? I would recommend using an [specific increment map]() within your `.obsidian.vimrc`
 
+```.obsidian.vimrc
+
+
+```
+
 # Features
 
 -   [ ] Edit your filesystem like a buffer (allows for creating, renaming, deleting, and moving)

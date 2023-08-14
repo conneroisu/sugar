@@ -15,8 +15,9 @@ import {
 	Setting,
 } from "obsidian";
 import { FolderSuggest } from "./folder_suggestion";
-import SugarPlugin from "src/main";
+import SugarPlugin from "../main";
 import { Ninja } from "./Ninja";
+import path from "path";
 
 /**
  * This is a settings tab for the plugin, Sugar.
@@ -36,13 +37,22 @@ export class SugarSettingTab extends PluginSettingTab {
 
 		containerEl.createEl("h2", { text: "Settings for the Sugar Plugin" });
 
+		// get the vault name by getting the last element of the absolute path of the vault
+		const basePath = (this.app.vault.adapter as any).basePath;
+		const vaultName = basePath.split(path.sep).pop();
+
 		/**
 		 * This is a settitng for the directory where .sugar files are stored and hidden for items inside of a directory
 		 **/
 		new Setting(containerEl)
 			.setName("Sugar Directory")
+
 			.setDesc(
-				"Directory name to hide the sugar files inside of. Additionally, the folder will be hidden from the file explorer inside Obsidian."
+				"Directory name to hide the sugar files inside of. Additionally, the folder will be hidden from the file explorer inside Obsidian depending on the following setting. (Default: 'sugar', meaning that the sugar view files will be generated in " +
+					vaultName +
+					path.sep +
+					"sugar" +
+					")"
 			)
 			.addSearch((cb) => {
 				new FolderSuggest(cb.inputEl);
@@ -55,13 +65,26 @@ export class SugarSettingTab extends PluginSettingTab {
 						this.plugin.saveSettings();
 					});
 			});
+
+		new Setting(containerEl)
+			.setName("Hide Sugar Directory")
+			.setDesc(
+				"Status of whether the sugar directory is hidden from the file explorer inside of Obsidian. (Default: true, meaning that the sugar directory is hidden from the file explorer)"
+			)
+			.addToggle((toggle: ToggleComponent) =>
+				toggle.onChange(async (value: boolean) => {
+					this.plugin.settings.hide_sugar_directory = value;
+					await this.plugin.saveSettings();
+				})
+			);
+
 		/**
 		 * This is the toggle for the debug mode for the plugin allowing for more diagnotstic information to be logged
 		 **/
 		new Setting(containerEl)
-			.setName("Debug`")
+			.setName("Debug")
 			.setDesc(
-				"Status fo teh Debugging mode allowing for more diagnostic info to be logged."
+				"Status of Sugar's Debugging mode allowing for more diagnostic info to be logged for developer users. (Default: false, meaning that debug mode is off)"
 			)
 			.addToggle((toggle: ToggleComponent) =>
 				toggle
@@ -73,30 +96,12 @@ export class SugarSettingTab extends PluginSettingTab {
 					})
 			);
 		/**
-		 * This is a setting that is a toggle for showing hidden files.
-		 **/
-		new Setting(containerEl)
-			.setName("Show Hidden Files")
-			.setDesc(
-				"Status determining whether hidden files are shown in the Sugar view."
-			)
-			.addToggle((toggle: ToggleComponent) =>
-				toggle
-					.setValue(this.plugin.settings.show_hidden)
-					.onChange(async (value: boolean): Promise<void> => {
-						value;
-						this.plugin.settings.show_hidden = value;
-						await this.plugin.saveSettings();
-					})
-			);
-
-		/**
 		 * This is a setting that is a toggle for treating files without extensions as markdown files inside of the Sugar View.
 		 **/
 		new Setting(containerEl)
 			.setName("No Extension Markdown Default")
 			.setDesc(
-				"Status determining whether files without extensions within the oil view are treated as markdown files. (Default: true, meaning that files without extensions are treated as markdown files)"
+				"Status determining whether files created without extensions within the sugar view are treated as markdown files. (Default: true, meaning that files without extensions are treated as markdown files)"
 			)
 			.addToggle((toggle: ToggleComponent) =>
 				toggle
@@ -107,22 +112,6 @@ export class SugarSettingTab extends PluginSettingTab {
 						value;
 						this.plugin.settings.no_extension_markdown_default =
 							value;
-						await this.plugin.saveSettings();
-					})
-			);
-
-		/**
-		 * Toggle representing the state of the debug setting for the plugin
-		 **/
-		new Setting(containerEl)
-			.setName("Status of the Debug Setting")
-			.setDesc("Allows for logging of states into the console ")
-			.addToggle((toggle: ToggleComponent) =>
-				toggle
-					.setValue(this.plugin.settings.debug)
-					.onChange(async (value: boolean) => {
-						value;
-						this.plugin.settings.debug = value;
 						await this.plugin.saveSettings();
 					})
 			);

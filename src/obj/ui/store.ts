@@ -1,5 +1,5 @@
 import {writable} from "svelte/store";
-import type SugarPlugin from "src/main";
+import SugarPlugin from "../../main";
 
 const plugin = writable<SugarPlugin>();
 export default {plugin};

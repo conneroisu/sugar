@@ -28,6 +28,7 @@ import {
 } from "./util";
 import { sep } from "path";
 import { Action } from "./action";
+import { SugarOperationView } from "./ui/view";
 
 export const menu_sep = "";
 export const MAXIMUM_ID = 100000;
@@ -150,9 +151,16 @@ export default class Sugar {
 	 **/
 	async save_sugar(): Promise<void> {
 		const file = this.app.workspace.getActiveFile();
+		new SugarOperationView(this.app, this).open();
 		if (file) {
 			this.parseSugarContent(file);
 		}
+	}
+	accept_operations(): () => void {
+		console.log("accepting operations");
+		return () => {
+			console.log("accepted operations");
+		};
 	}
 
 	/**

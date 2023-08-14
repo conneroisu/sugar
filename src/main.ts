@@ -8,17 +8,20 @@
  */
 
 import { Plugin } from "obsidian";
-
 import { DEFAULT_SETTINGS, SugarSettings } from "./settings/SugarSettings";
-import { SugarSettingTab } from "./settings/SugarSettingTab";
+import { SugarSettingTab } from "./settings/SugarSettingsTab";
 import { Ninja } from "./settings/Ninja";
 
 import { CommandHandler } from "./command_handler";
 import Sugar from "./obj/sugar";
 import SugarPostionMemory from "./obj/sugar_position_memory";
-import {  SugarOperationView } from "./obj/ui/view";
+import { SugarOperationView } from "./obj/ui/view";
+import store from "./obj/ui/store";
 
 export default class SugarPlugin extends Plugin {
+	acceptOperations() {
+		console.log("accepting operations");
+	}
 	private view: SugarOperationView;
 	public settings: SugarSettings;
 	public sugar: Sugar;
@@ -28,6 +31,8 @@ export default class SugarPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
+		store.plugin.set(this);
+	
 		// add ignore to the vault .config json file
 
 		if (this.settings.debug) {
@@ -64,9 +69,5 @@ export default class SugarPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
-	}
-
-	async openMapView() {
-		new SugarOperationView(this.app).open();
 	}
 }
