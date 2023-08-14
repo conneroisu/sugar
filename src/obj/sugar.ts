@@ -71,19 +71,8 @@ export default class Sugar {
 		const line = editor.getLine(cursor.line);
 		const line_text = line.slice(0, undefined);
 		const id = parse_id(line_text);
-		// if the file is a TFolder open the directory in a sugar file
-		if (this.fTable[id] instanceof TFolder) {
-			const lat = await this.getLatentSugarFile(
-				this.fTable[id].path + sep + ".sugar"
-			);
-			this.app.workspace
-				.getMostRecentLeaf()
-				?.openFile(lat, {active: true});
-			return;
-		}
-		this.app.workspace
-			.getMostRecentLeaf()
-			?.openFile(this.fTable[id] as TFile, {active: true});
+		console.log("Selected : " + this.sweetTable[id].path);
+		//TODO: open the file that is selected
 	}
 
 	async openSugar(): Promise<void> {
@@ -98,21 +87,22 @@ export default class Sugar {
 				active_file = resolve_tfolder(vault_file.path);
 			}
 		}
-		active_file = await this.getLatentSugarFile(active_file.path);
+		active_file = await this.getLatentSugarFile(active_file);
 		await leaf?.openFile(active_file, {active: true});
 	}
 
-	async getLatentSugarFile(file_path: string): Promise<TFile> {
-		file_path = normalizePath(file_path);
-		const path: string = file_path.replace(sep, "^");
+	async getLatentSugarFile(abstractFile: TAbstractFile): Promise<TFile> {
 		let latent_sugar_file: TFile;
 		const latent_sugar_file_path =
-			this.plugin.settings.sugar_directory + sep + "∆" + path + ".sugar";
+			this.plugin.settings.sugar_directory +
+			sep +
+			abstractFile.path +
+			".sugar";
 
 		try {
 			latent_sugar_file = await this.app.vault.create(
 				latent_sugar_file_path,
-				await this.create_content_list(file_path)
+				await this.create_content_list(abstractFile)
 			);
 		} catch (error) {
 			latent_sugar_file = resolve_tfile(latent_sugar_file_path);
@@ -133,7 +123,7 @@ export default class Sugar {
 	}
 
 	/**
-	 * Saves actions takes within the sugar file
+	 * Saves actions takes within the sugar files.
 	 **/
 	async save_sugar(): Promise<void> {
 		const file = this.app.workspace.getActiveFile();
@@ -142,8 +132,19 @@ export default class Sugar {
 			this.parseSugarContent(file);
 		}
 	}
+
+	/**
+	 * Executes the actions that have been accumulated.
+	 **/
 	accept_operations() {
-		console.log("accepting operations");
+		this.actions.forEach((action) => {
+			try {
+				action.execute();
+			} catch (error) {
+				console.error(error);
+				// TODO: add popper to show error next to the line that caused the error
+			}
+		});
 	}
 
 	/**
@@ -167,17 +168,17 @@ export default class Sugar {
 	sort_actions(actions: Action[]) {
 		const result: Action[] = [];
 		actions.forEach((action) => {
-			if (action.type === "move") {
+			if (action.type.toUpperCase() === "MOVE") {
 				result.push(action);
 			}
 		});
 		actions.forEach((action) => {
-			if (action.type === "create") {
+			if (action.type.toUpperCase() === "CREATE") {
 				result.push(action);
 			}
 		});
 		actions.forEach((action) => {
-			if (action.type === "delete") {
+			if (action.type.toUpperCase() === "DELETE") {
 				result.push(action);
 			}
 		});
@@ -197,44 +198,36 @@ export default class Sugar {
 		throw new Error("Method not implemented.");
 	}
 
-	async create_content_list(file_path: string): Promise<string> {
-		if (this.Debugging())
-			console.log("creating content list for:", file_path);
-
-		const files: TAbstractFile[] = [];
+	async create_content_list(abstractFile: TAbstractFile): Promise<string> {
 		const lines: string[] = [];
-
-		const folder_path = "/";
-		const folder: TFolder = this.app.vault.getAbstractFileByPath(
-			folder_path
-		) as TFolder;
-
-		if (folder) {
-			folder.children.forEach((file) => {
-				if (this.Debugging()) console.log("file:", file);
-				if (file instanceof TAbstractFile) {
-					// if the file is a folder insert a / at the end and insert at the beginning of the files
-					if (file instanceof TFolder) {
-						const generated_id = generate_id(this.fTable);
-						const res = resolve_tfolder(file.path);
-						if (res != null && res instanceof TFolder) {
-							this.fTable[parse_id(generated_id)] = res;
-						}
-						let content_path = file.path;
-						content_path = content_path.replace(sep, "^");
-
-						lines.unshift(
-							"∆" + generated_id + menu_sep + content_path + sep
-						);
-						files.unshift(file);
-					} else {
-						const generated_id = generate_id(this.fTable);
-						this.fTable[parse_id(generated_id)] = file;
-						lines.push("∆" + generated_id + menu_sep + file.name);
-						files.push(file);
+		if (abstractFile instanceof TFolder) {
+			abstractFile.children.forEach((file) => {
+				if (this.debug) console.log("file:", file);
+				// if the file is a folder insert a / at the end and insert at the beginning of the files
+				if (file instanceof TFolder) {
+					const generated_id = generate_id(this.fTable);
+					const res = resolve_tfolder(file.path);
+					if (res != null && res instanceof TFolder) {
+						this.fTable[parse_id(generated_id)] = res;
 					}
+					let content_path = file.path;
+					content_path = content_path.replace(sep, "^");
+
+					lines.unshift(
+						"∆" + generated_id + menu_sep + content_path + sep
+					);
+				} else {
+					const generated_id = generate_id(this.fTable);
+					this.fTable[generated_id] = file;
+					lines.push("∆" + generated_id + menu_sep + file.name);
 				}
 			});
+		} else {
+			if (abstractFile.parent != null) {
+				this.create_content_list(abstractFile.parent);
+			} else {
+				this.create_content_list(resolve_tfolder("/"));
+			}
 		}
 		return lines.join("\n");
 	}
@@ -261,13 +254,9 @@ export default class Sugar {
 			if (path == null) {
 				return;
 			}
-			const content = await this.create_content_list(path.path);
+			const content = await this.create_content_list(file);
 
 			this.app.vault.append(file, content);
 		}
-	}
-
-	Debugging(): boolean {
-		return this.plugin.settings.debug;
 	}
 }
