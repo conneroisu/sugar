@@ -12,11 +12,9 @@ import {DEFAULT_SETTINGS, SugarSettings} from "./settings/SugarSettings";
 import {SugarSettingTab} from "./settings/SugarSettingsTab";
 import {Ninja} from "./settings/Ninja";
 
-import {CommandHandler} from "./command_handler";
+import {CommandHandler} from "./obj/command_handler";
 import Sugar from "./obj/sugar";
 import SugarPostionMemory from "./obj/sugar_position_memory";
-import {SugarOperationView} from "./obj/ui/view";
-import store from "./obj/ui/store";
 
 export default class SugarPlugin extends Plugin {
 	public settings: SugarSettings;

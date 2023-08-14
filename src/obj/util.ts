@@ -8,7 +8,6 @@
  */
 
 import {normalizePath, TAbstractFile, TFile, TFolder, Vault} from "obsidian";
-import * as path from "path";
 export const MAXIMUM_ID = 100000;
 
 /**
@@ -27,29 +26,15 @@ export function resolve_tfile(file_str: string): TFile {
 	return file;
 }
 
-export function resolve_tfolder(folder_str: string): TFolder | TFile | null {
+export function resolve_tfolder(folder_str: string): TFolder | TFile {
 	folder_str = normalizePath(folder_str);
 
 	const folder = app.vault.getAbstractFileByPath(folder_str);
 
-	if (!folder) {
-		return null;
-	}
 	if (!(folder instanceof TFolder)) {
 		return resolve_tfile(folder_str);
 	}
 	return folder;
-}
-
-export function get_folder_path(file_path: string): string {
-	// if the file path is at the root of the vault(doesn't have any seps), set it to /
-	if (file_path.indexOf(path.sep) === -1) {
-		file_path = path.sep;
-	} else {
-		//remove the last characters before the last sep
-		file_path = file_path.substring(0, file_path.lastIndexOf(path.sep));
-	}
-	return file_path;
 }
 
 export function ensure_sugar_directory(sugar_directory: string, vault: Vault) {

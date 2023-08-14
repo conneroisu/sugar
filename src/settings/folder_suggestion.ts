@@ -9,8 +9,8 @@
 
 // Credits go to Liam's Periodic Notes Plugin: https://github.com/liamcain/obsidian-periodic-notes
 
-import { TAbstractFile, TFolder } from "obsidian";
-import { TextInputSuggest } from "./suggestion_handler";
+import {TAbstractFile, TFolder} from "obsidian";
+import {TextInputSuggest} from "./suggestion_handler";
 
 export class FolderSuggest extends TextInputSuggest<TFolder> {
 	getSuggestions(inputStr: string): TFolder[] {

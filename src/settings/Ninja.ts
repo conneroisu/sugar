@@ -11,9 +11,12 @@
  * Ninja is a class that provides a set of static methods to hide and unhide elements in the DOM.
  * This is used to hide the sugar path in the file explorer.
  **/
+import SugarPlugin from "../main";
+
 export class Ninja {
-	constructor(SugarPlugin: plugin) {
-		this.plugin = SugarPlugin;
+	plugin:SugarPlugin;
+	constructor(plugin: SugarPlugin) {
+		this.plugin = plugin;
 	}
 
 	public hidePath(path: string) {

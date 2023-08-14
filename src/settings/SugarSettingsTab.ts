@@ -16,7 +16,6 @@ import {
 } from "obsidian";
 import {FolderSuggest} from "./folder_suggestion";
 import SugarPlugin from "../main";
-import {Ninja} from "./Ninja";
 import path from "path";
 
 /**
@@ -38,6 +37,7 @@ export class SugarSettingTab extends PluginSettingTab {
 		containerEl.createEl("h2", {text: "Settings for the Sugar Plugin"});
 
 		// get the vault name by getting the last element of the absolute path of the vault
+		// @ts-ignore // @eslint-ignore
 		const basePath = (this.app.vault.adapter as any).basePath;
 		const vaultName = basePath.split(path.sep).pop();
 
@@ -59,7 +59,9 @@ export class SugarSettingTab extends PluginSettingTab {
 				cb.setPlaceholder("example: folder1/folder2")
 					.setValue(this.plugin.settings.sugar_directory)
 					.onChange((new_folder) => {
-						Ninja.unhidePath(this.plugin.settings.sugar_directory);
+						this.plugin.ninja.unhidePath(
+							this.plugin.settings.sugar_directory
+						);
 						this.plugin.ninja.unhidePath(new_folder);
 						this.plugin.settings.sugar_directory = new_folder;
 						this.plugin.saveSettings();

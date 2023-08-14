@@ -17,10 +17,9 @@ import {
 	TFolder,
 } from "obsidian";
 import {
-	deleteOldSugarFiles as deleteOldSFiles,
+	deleteOldSugarFiles,
 	isSugarFile,
-	ensure_sugar_directory as ensureSDir,
-	get_folder_path,
+	ensure_sugar_directory,
 	resolve_tfile,
 	resolve_tfolder,
 	parse_id,
@@ -40,8 +39,6 @@ export default class Sugar {
 	plugin: SugarPlugin;
 	debug: boolean;
 	app: App;
-	files: TFile[] = [];
-	contents: string[] = [];
 	fTable: Record<string, TAbstractFile> = {};
 	sweetTable: Record<string, TAbstractFile> = {};
 	actions: Action[] = [];
@@ -54,8 +51,14 @@ export default class Sugar {
 		this.plugin = sugar_plugin;
 		this.app = this.plugin.app;
 		this.debug = this.plugin.settings.debug;
-		ensureSDir(this.plugin.settings.sugar_directory, this.app.vault);
-		deleteOldSFiles(this.app.vault, this.plugin.settings.sugar_directory);
+		ensure_sugar_directory(
+			this.plugin.settings.sugar_directory,
+			this.app.vault
+		);
+		deleteOldSugarFiles(
+			this.app.vault,
+			this.plugin.settings.sugar_directory
+		);
 	}
 
 	async select_entry() {
@@ -71,7 +74,7 @@ export default class Sugar {
 		// if the file is a TFolder open the directory in a sugar file
 		if (this.fTable[id] instanceof TFolder) {
 			const lat = await this.getLatentSugarFile(
-				this.fTable[id].path + sep + "sug"
+				this.fTable[id].path + sep + ".sugar"
 			);
 			this.app.workspace
 				.getMostRecentLeaf()
@@ -83,30 +86,20 @@ export default class Sugar {
 			?.openFile(this.fTable[id] as TFile, {active: true});
 	}
 
-	async open_sugar(): Promise<void> {
+	async openSugar(): Promise<void> {
 		// get the active workspace leaf
-		let active_file = this.app.workspace.getActiveFile();
+		let active_file: TFile | TFolder | null =
+			this.app.workspace.getActiveFile();
 		const leaf = this.app.workspace.getMostRecentLeaf();
-
-		let res: null | TFolder | TFile = null;
-
-		if (active_file != null) {
-			if (isSugarFile(active_file.path) && active_file.parent != null) {
-				const vault_file = await this.GetVaultFile(
-					active_file.parent.path
-				);
-				if (vault_file != null) {
-					res = resolve_tfolder(vault_file.path);
-				}
+		if (active_file == null) return;
+		if (isSugarFile(active_file.path) && active_file.parent != null) {
+			const vault_file = await this.GetVaultFile(active_file.parent.path);
+			if (vault_file != null) {
+				active_file = resolve_tfolder(vault_file.path);
 			}
-			if (!res) {
-				res = active_file;
-			}
-			active_file = await this.getLatentSugarFile(res.path);
-			await leaf?.openFile(active_file, {active: true});
-			this.files.push(active_file);
-			this.contents.push(await this.app.vault.cachedRead(active_file));
 		}
+		active_file = await this.getLatentSugarFile(active_file.path);
+		await leaf?.openFile(active_file, {active: true});
 	}
 
 	async getLatentSugarFile(file_path: string): Promise<TFile> {
@@ -116,19 +109,13 @@ export default class Sugar {
 		const latent_sugar_file_path =
 			this.plugin.settings.sugar_directory + sep + "∆" + path + ".sugar";
 
-		latent_sugar_file = await this.app.vault.create(
-			latent_sugar_file_path,
-			await this.create_content_list(file_path)
-		);
-
 		try {
-			latent_sugar_file = resolve_tfile(latent_sugar_file_path);
-		} catch (error) {
-			// get the file from the sugar version of the file
 			latent_sugar_file = await this.app.vault.create(
 				latent_sugar_file_path,
 				await this.create_content_list(file_path)
 			);
+		} catch (error) {
+			latent_sugar_file = resolve_tfile(latent_sugar_file_path);
 		}
 
 		this.sweetTable[generate_id(this.sweetTable)] = latent_sugar_file;
@@ -155,11 +142,8 @@ export default class Sugar {
 			this.parseSugarContent(file);
 		}
 	}
-	accept_operations(): () => void {
+	accept_operations() {
 		console.log("accepting operations");
-		return () => {
-			console.log("accepted operations");
-		};
 	}
 
 	/**
@@ -214,84 +198,49 @@ export default class Sugar {
 	}
 
 	async create_content_list(file_path: string): Promise<string> {
-		// remove the file name and extension from the end of the file path
-		let folder_path = file_path.substring(0, file_path.lastIndexOf(sep));
-		folder_path = get_folder_path(file_path);
+		if (this.Debugging())
+			console.log("creating content list for:", file_path);
 
 		const files: TAbstractFile[] = [];
-		const files_paths: string[] = [];
+		const lines: string[] = [];
 
-		const folder: TFolder | null = this.app.vault.getAbstractFileByPath(
+		const folder_path = "/";
+		const folder: TFolder = this.app.vault.getAbstractFileByPath(
 			folder_path
-		) as TFolder | null;
+		) as TFolder;
 
 		if (folder) {
 			folder.children.forEach((file) => {
+				if (this.Debugging()) console.log("file:", file);
 				if (file instanceof TAbstractFile) {
 					// if the file is a folder insert a / at the end and insert at the beginning of the files
-					files_paths.push();
 					if (file instanceof TFolder) {
 						const generated_id = generate_id(this.fTable);
 						const res = resolve_tfolder(file.path);
 						if (res != null && res instanceof TFolder) {
 							this.fTable[parse_id(generated_id)] = res;
 						}
-						// if the file.path contains a separator replace it with ^
 						let content_path = file.path;
-						if (content_path.includes(sep)) {
-							content_path = content_path.replace(sep, "^");
-						}
+						content_path = content_path.replace(sep, "^");
 
-						files_paths.unshift(
+						lines.unshift(
 							"∆" + generated_id + menu_sep + content_path + sep
 						);
 						files.unshift(file);
 					} else {
 						const generated_id = generate_id(this.fTable);
 						this.fTable[parse_id(generated_id)] = file;
-						files_paths.push(
-							"∆" + generated_id + menu_sep + file.name
-						);
+						lines.push("∆" + generated_id + menu_sep + file.name);
 						files.push(file);
 					}
 				}
 			});
 		}
-		return files_paths.join("\n");
+		return lines.join("\n");
 	}
 
 	public getActiveViewOfType() {
 		return this.app.workspace.getActiveViewOfType(MarkdownView);
-	}
-
-	async removeFolderContents(folder: TFolder): Promise<void> {
-		const files = this.app.vault.getMarkdownFiles();
-		for (const file of files) {
-			if (file.parent?.path === folder.path) {
-				await this.app.vault.delete(file);
-				this.plugin.sugar_position_memory.deleteFile(file);
-			}
-		}
-		const subfolders = folder.children.filter(
-			(child): child is TFolder => child instanceof TFolder
-		);
-		for (const subfolder of subfolders) {
-			if (subfolder.path.startsWith(folder.path)) {
-				await this.app.vault.delete(subfolder);
-			}
-		}
-	}
-
-	async getAllFolders(): Promise<TFolder[]> {
-		const folders: TFolder[] = [];
-		const files = this.app.vault.getMarkdownFiles();
-		for (const file of files) {
-			const {parent} = file;
-			if (parent instanceof TFolder && !folders.includes(parent)) {
-				folders.push(parent);
-			}
-		}
-		return folders;
 	}
 
 	/**
@@ -316,5 +265,9 @@ export default class Sugar {
 
 			this.app.vault.append(file, content);
 		}
+	}
+
+	Debugging(): boolean {
+		return this.plugin.settings.debug;
 	}
 }

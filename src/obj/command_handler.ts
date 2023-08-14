@@ -7,7 +7,7 @@
  * Copyright (c) 2023 Conner Ohnesorge
  */
 
-import SugarPlugin from "./main";
+import SugarPlugin from "../main";
 
 /**
  * A class to handle the commands of the SugarPlugin
@@ -31,12 +31,11 @@ export class CommandHandler {
 			console.log("Setup Method of Command Handler is running.");
 		}
 
-	
 		this.plugin.addCommand({
 			id: "open-sugar-view",
 			name: "Sugar View Open",
 			callback: () => {
-				this.plugin.sugar.open_sugar();
+				this.plugin.sugar.openSugar();
 			},
 		});
 		this.plugin.addCommand({

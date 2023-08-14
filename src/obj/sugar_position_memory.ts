@@ -14,7 +14,7 @@ import {
 	Editor,
 	EphemeralState,
 } from "obsidian";
-import SugarPlugin from "src/main";
+import SugarPlugin from "../main";
 import {CURSOR_DB_NAME, CURSOR_SAVE_INTERVAL} from "./constants";
 import {sep} from "path";
 import {CURSOR_OPEN_DELAY} from "./constants";
