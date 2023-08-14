@@ -1,8 +1,5 @@
 <script lang="ts">
-	import type SugarPlugin from "src/main";
-
-	let plugin: SugarPlugin;
-	store.plugin.subscribe((p) => (plugin = p));
+	import { Console } from "console";
 
 	let columns = ["Operation", "Details"];
 	let data = [
@@ -13,15 +10,6 @@
 		["MOVE", "old_dir/file_name.md → new_dir/new_file_name.md"],
 	];
 	let newRow = [...columns];
-
-	function addRow() {
-		data = [...data, [...newRow]];
-		newRow = columns;
-	}
-
-	function deleteRow(rowToBeDeleted) {
-		data = data.filter((row) => row != rowToBeDeleted);
-	}
 </script>
 
 <table>
@@ -36,10 +24,23 @@
 			{#each row as cell}
 				<td contenteditable="true" bind:innerHTML={cell} />
 			{/each}
-			<button on:click={() => deleteRow(row)}> X </button>
 		</tr>
 	{/each}
 </table>
 
+<div class="actionbuttons">
+	<button name="Accept" on:click={() => console.log("Accept")}
+		>✔️Accept</button
+	>
+	<button name="Cancel" on:click={() => console.log("Cancel")}
+		>❌Cancel</button
+	>
+</div>
+
 <style>
+	.actionbuttons {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 </style>

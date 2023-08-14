@@ -16,7 +16,7 @@ import { Ninja } from "./settings/Ninja";
 import { CommandHandler } from "./command_handler";
 import Sugar from "./obj/sugar";
 import SugarPostionMemory from "./obj/sugar_position_memory";
-import { VIEW_TYPE, SugarOperationView } from "./obj/ui/view";
+import {  SugarOperationView } from "./obj/ui/view";
 
 export default class SugarPlugin extends Plugin {
 	private view: SugarOperationView;
@@ -67,10 +67,6 @@ export default class SugarPlugin extends Plugin {
 	}
 
 	async openMapView() {
-		const workspace = this.app.workspace;
-		workspace.detachLeavesOfType(VIEW_TYPE);
-		const leaf = workspace.getLeaf();
-		await leaf.setViewState({ type: VIEW_TYPE });
-		workspace.revealLeaf(leaf);
+		new SugarOperationView(this.app).open();
 	}
 }
