@@ -25,9 +25,9 @@ import {
 	parse_id,
 	generate_id,
 } from "./util";
-import {sep} from "path";
-import {Action} from "./action";
-import {SugarOperationView} from "./ui/view";
+import { sep } from "path";
+import { Action } from "./action";
+import { SugarOperationView } from "./ui/view";
 
 export const menu_sep = "";
 export const MAXIMUM_ID = 100000;
@@ -66,7 +66,7 @@ export default class Sugar {
 		if (!markdownView) {
 			return;
 		}
-		const {editor} = markdownView;
+		const { editor } = markdownView;
 		const cursor = editor.getCursor();
 		const line = editor.getLine(cursor.line);
 		const line_text = line.slice(0, undefined);
@@ -79,6 +79,7 @@ export default class Sugar {
 		// get the active workspace leaf
 		let active_file: TFile | TFolder | null =
 			this.app.workspace.getActiveFile();
+
 		const leaf = this.app.workspace.getMostRecentLeaf();
 		if (active_file == null) return;
 		if (isSugarFile(active_file.path) && active_file.parent != null) {
@@ -88,7 +89,7 @@ export default class Sugar {
 			}
 		}
 		active_file = await this.getLatentSugarFile(active_file);
-		await leaf?.openFile(active_file, {active: true});
+		await leaf?.openFile(active_file, { active: true });
 	}
 
 	async getLatentSugarFile(abstractFile: TAbstractFile): Promise<TFile> {
@@ -143,6 +144,7 @@ export default class Sugar {
 			} catch (error) {
 				console.error(error);
 				// TODO: add popper to show error next to the line that caused the error
+				// showErrorMessage(error);
 			}
 		});
 	}
@@ -169,6 +171,12 @@ export default class Sugar {
 		const result: Action[] = [];
 		actions.forEach((action) => {
 			if (action.type.toUpperCase() === "MOVE") {
+				result.push(action);
+			}
+		});
+
+		actions.forEach((action) => {
+			if (action.type.toUpperCase() === "RENAME") {
 				result.push(action);
 			}
 		});
